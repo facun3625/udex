@@ -18,12 +18,12 @@ Un único motor (`resolveScan` + `ScanInput`) para ingreso, caja y conteo; `Barc
 F1. Lectores tipo pistola en modo teclado (sin drivers) + cámara del celular. — Pedido explícito: llega la
 mercadería, se escanea y se pone la cantidad; lo mismo para vender. Ver 08.
 
-## Propuestas (con recomendación, falta confirmar)
-
-**D-01 · Una instalación por cliente, multiempresa adentro** — Propuesta — Cada cliente tiene su
+**D-01 · Una instalación por cliente, multiempresa adentro** — Aceptada (2026-10-13) — Cada cliente tiene su
 instancia y base (como hoy las tiendas); dentro, varias empresas (CUIT) y sucursales. Todo con `companyId`.
 — Coincide con cómo se despliega todo hoy; aislamiento total entre clientes. Si en el futuro se quiere
 SaaS compartido, el `companyId` ya está y se agrega un nivel `Tenant`.
+
+## Propuestas (con recomendación, falta confirmar)
 
 **D-02 · Catálogo compartido entre empresas de una instalación** — Propuesta — Productos compartidos;
 stock, precios por lista y comprobantes por empresa. — Un dueño con dos CUIT vende los mismos productos.
