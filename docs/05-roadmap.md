@@ -1,0 +1,130 @@
+# 05 — Roadmap
+
+Tablero de avance. Marcar `- [x]` al terminar y anotar en [CHANGELOG.md](../CHANGELOG.md).
+Cada tarea es un cambio chico y revisable. **Fase activa: F0.**
+
+Orden acordado: fundaciones → **stock** → catálogo → ventas/POS → ARCA → tienda → compras → caja →
+reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda — D-03.)
+
+---
+
+## F0 — Fundaciones
+
+- [x] F0.1 Crear proyecto Next 16 + TS + Tailwind 4 + ESLint (mismas versiones que corto). `git init`, repo en GitHub.
+- [x] F0.2 Prisma 7 + Postgres (docker-compose para desarrollo), `src/lib/prisma.ts` como corto.
+- [x] F0.3 `src/lib/money.ts`: helpers de `Decimal` (sumar, redondear 2 dec, formatear ARS/USD) + tests.
+- [ ] F0.4 Modelos core: `Company`, `Branch`, `Warehouse`, `User`, `Role`, `Permission`, `UserBranchRole`, `AuditLog`, `Sequence`, `Setting`, `OutboxEvent`.
+- [ ] F0.5 NextAuth 5 (Credentials), login, selector de empresa/sucursal en la sesión.
+- [ ] F0.6 Permisos: helper `requirePermission(ctx, "x.y")` + roles semilla.
+- [ ] F0.7 Layout del panel (sidebar por módulo, buscador global, modo oscuro).
+- [ ] F0.8 Componentes base: tabla con paginación/filtros server-side, formulario, diálogo de confirmación, toasts.
+- [ ] F0.9 `src/lib/r2.ts` (Cloudflare R2, igual que corto) + subida de imágenes con thumbnail (sharp).
+- [ ] F0.10 Cifrado de secretos (`src/lib/crypto.ts`, AES-256-GCM, clave en `.env`).
+- [ ] F0.11 Worker PM2 (`npm run worker`) que procesa `OutboxEvent` con reintentos.
+- [ ] F0.12 Infra de tests: `node --test` + e2e con base `<db>_e2e` (copiar el patrón de corto).
+- [ ] F0.13 `scripts/deploy.sh`, `.env.example`, guía VPS (basada en `guia_nueva_app.md` de corto).
+- [ ] F0.14 Asistente de alta de empresa: CUIT, razón social, condición IVA, sucursal y depósito inicial, plantilla de rubro.
+
+## F1 — Núcleo de stock (ver 02 §1)
+
+- [ ] F1.1 Modelos `Unit`, `UnitConversion`, `Product`, `Variant` y **`Barcode`** mínimos (los necesarios para tener SKU escaneable).
+- [ ] F1.1b `modules/catalog/barcode.ts`: `resolveScan` (EAN-13/8/UPC, verificador, factor de caja, SKU, desconocido) + generador de EAN internos + tests. Ver 08 §3.
+- [ ] F1.1c Componente `ScanInput` (pistola HID, Enter, multiplicador `6*`, bip ok/error, re-foco, suma en la misma línea). Ver 08 §4.
+- [ ] F1.2 `StockMovement` + `StockBalance` + `modules/inventory/post.ts` (registrar movimientos en transacción con advisory lock, actualizar saldo). Tests de concurrencia.
+- [ ] F1.3 Política de stock negativo (block/warn/allow) por empresa y depósito.
+- [ ] F1.4 `StockReservation` (crear, consumir, liberar, vencer) + job de vencimiento.
+- [ ] F1.5 Carga inicial de stock (movimiento `initial`) desde pantalla, **por escaneo** y CSV.
+- [ ] F1.5b **Ingreso de mercadería por escaneo** (`StockReceipt`): depósito, modo "suma 1" / "escanear + cantidad", costo, borrador autoguardado, código desconocido → asociar o crear producto rápido. Ver 08 §6.
+- [ ] F1.6 Ajustes de stock con motivo y permiso.
+- [ ] F1.7 Transferencias entre depósitos (draft → sent → received).
+- [ ] F1.8 Conteo físico por escaneo (pistola o cámara del celular, varios contadores en paralelo). Ver 08 §8.
+- [ ] F1.9 Pantallas: existencias por depósito, kardex (historial de movimientos) por SKU.
+- [ ] F1.10 `VariantCost`: costo promedio ponderado.
+- [ ] F1.11 `inventory:verify` (recalcular saldos desde el ledger y alertar diferencias).
+- [ ] F1.12 Mínimos/máximos y alerta de faltantes.
+
+## F2 — Catálogo universal (ver 02 §2)
+
+- [ ] F2.1 `Attribute`, `AttributeOption` (tipos: text, number, select, multiselect, color, boolean, date).
+- [ ] F2.2 `ProductTemplate` + `TemplateAttribute` (descriptivo / eje de variante).
+- [ ] F2.3 `Category` (árbol), `Brand`, `Tag`.
+- [ ] F2.4 ABM de producto completo: tipo, plantilla, atributos, unidad, IVA, controles (stock/lote/serie), imágenes R2.
+- [ ] F2.5 Generador de variantes por ejes + patrón de SKU.
+- [ ] F2.6 Gestión de códigos en el ABM (varios por variante, caja con factor, aviso de duplicado) + impresión de etiquetas A4 y rollo. Ver 08 §9.
+- [ ] F2.6b Etiquetas de balanza (`ScaleBarcodeFormat`, peso/precio variable). Ver 08 §5.
+- [ ] F2.7 Listas de precios (base, derivadas por %, redondeo, escalas por cantidad) + actualización masiva.
+- [ ] F2.8 Importación / exportación CSV de productos y variantes.
+- [ ] F2.9 Plantillas de rubro (`seed/rubros/*.json`): indumentaria, ferretería, almacén, electrónica, farmacia, librería, autopartes, servicios.
+- [ ] F2.10 Kits/combos (`KitComponent`) y su efecto en stock.
+- [ ] F2.11 Lotes + vencimientos; números de serie.
+
+## F3 — Clientes, ventas y punto de venta (sin fiscal todavía)
+
+- [ ] F3.1 `Customer` (doc, condición IVA, lista de precios, domicilios).
+- [ ] F3.2 `modules/sales/totals.ts` (cálculo de líneas, descuentos, IVA por alícuota, redondeos) + tests exhaustivos.
+- [ ] F3.3 `SalesDocument` + líneas: presupuesto, pedido, remito. Conversión entre documentos.
+- [ ] F3.4 Reglas de stock: pedido reserva, remito/entrega descuenta, devolución reingresa.
+- [ ] F3.5 **POS (caja) por escaneo**: `ScanInput`, re-escaneo suma cantidad, multiplicador, balanza, desconocido → buscador (+ asociar código con permiso), política de stock, cache de códigos en el navegador, < 150 ms por escaneo. Ver 08 §7.
+- [ ] F3.5b POS: cobro con varios medios de pago (`F12`), descuentos con permiso, devolución/cambio escaneando.
+- [ ] F3.6 PDF de documentos (A4 y ticket 80 mm) subidos a R2 + envío por mail.
+
+## F4 — Facturación electrónica ARCA (ver 03)
+
+- [ ] F4.1 Generar clave + CSR; subir certificado; `ArcaCredential` cifrada; alerta de vencimiento.
+- [ ] F4.2 WSAA: TRA, firma CMS (`node-forge`), `loginCms`, cache `ArcaToken` con lock.
+- [ ] F4.3 Cliente SOAP WSFEv1 + `FiscalRequestLog`; métodos `FEDummy`, `FEParamGet*` (tipos cbte, IVA, condición IVA receptor, monedas, ptos venta, cotización).
+- [ ] F4.4 `voucherType.ts` (qué letra corresponde) + tests.
+- [ ] F4.5 `FECAESolicitar` para Factura A/B/C (productos, servicios, ambos), multimoneda.
+- [ ] F4.6 Notas de crédito/débito con comprobante asociado.
+- [ ] F4.7 Reconciliación por timeout (`FECompUltimoAutorizado` + `FECompConsultar`) + worker de pendientes.
+- [ ] F4.8 QR + PDF fiscal (A4 y ticket) con transparencia fiscal.
+- [ ] F4.9 Padrón: autocompletar cliente por CUIT.
+- [ ] F4.10 Asistente de configuración (pasos del alta en ARCA) + prueba de conexión.
+- [ ] F4.11 Facturar desde POS en un paso. E2E completo en homologación.
+
+## F5 — Integración con la tienda (ver 04)
+
+- [ ] F5.1 `Channel`, `ChannelWarehouse`, `ChannelListing`, `ApiKey`.
+- [ ] F5.2 API `/api/v1` (catálogo, stock, reservas, pedidos, clientes, factura) + firmas HMAC.
+- [ ] F5.3 Webhooks salientes desde el outbox.
+- [ ] F5.4 Pantalla "Publicar en tienda" (por producto y masivo; overrides de título/descr./SEO).
+- [ ] F5.5 Facturación automática de pedidos web (`on_paid` / `on_shipped`).
+- [ ] F5.6 Importador corto → Udex (categorías, atributos, productos, variantes, imágenes, stock, clientes).
+- [ ] F5.7 **En corto**: `ERP_MODE`, ids externos, cliente `src/lib/erp/`, webhook receptor, pull incremental.
+- [ ] F5.8 **En corto**: checkout con reserva en Udex + fallback; campos de factura A.
+- [ ] F5.9 **En corto**: panel en solo lectura para catálogo en modo udex; factura en pedido, mail y "Mi cuenta".
+- [ ] F5.10 E2E: compra web → reserva → pedido → factura B homologación → PDF en la tienda.
+
+## F6 — Compras y proveedores
+
+- [ ] F6.1 `Supplier`, `SupplierProduct` (código y costo del proveedor).
+- [ ] F6.2 Orden de compra + sugerencia por faltantes.
+- [ ] F6.3 Recepción contra orden de compra **usando la misma pantalla de escaneo de F1.5b** (total/parcial, diferencias vs. lo pedido) → stock + CPP.
+- [ ] F6.4 Factura de proveedor (tipo, nº, CAE, percepciones) → cuenta corriente y libro IVA compras.
+- [ ] F6.5 Actualización de precios de venta desde lista de costos del proveedor (CSV).
+
+## F7 — Caja, cobranzas y cuentas corrientes
+
+- [ ] F7.1 `PaymentMethod` (recargos, cuotas), `CashRegister`, `CashSession` (apertura, cierre, arqueo).
+- [ ] F7.2 `AccountEntry`: cuenta corriente de clientes y proveedores, límite de crédito.
+- [ ] F7.3 Recibos de cobro y órdenes de pago con imputación.
+- [ ] F7.4 Cartera de cheques.
+- [ ] F7.5 Movimientos de caja (ingresos/egresos varios) y transferencias entre cajas.
+
+## F8 — Reportes y exportaciones
+
+- [ ] F8.1 Tablero: ventas del día/mes, por canal, sucursal, vendedor; margen.
+- [ ] F8.2 Stock valorizado, rotación, sin movimiento, por vencer.
+- [ ] F8.3 Libro IVA ventas/compras + exportación para Libro IVA Digital.
+- [ ] F8.4 Ranking de productos, clientes; exportación CSV/Excel de todo listado.
+
+## F9 — Avanzado
+
+- [ ] CAEA (contingencia) · WSFEX (exportación) · FCE MiPyME
+- [ ] Percepciones/retenciones IIBB por padrón
+- [ ] Producción simple (recetas / ordenes de armado)
+- [ ] Multimoneda con cotización diaria y precios en USD
+- [ ] Promociones (2x1, % en segunda unidad) compartidas con la tienda
+- [ ] Más canales: Mercado Libre, Tiendanube
+- [ ] App móvil/PWA para depósito (conteo y recepciones con la cámara)
+- [ ] Asistente de IA para consultas ("¿qué me conviene reponer?")

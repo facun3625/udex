@@ -1,0 +1,17 @@
+# Postgres para desarrollo local. En el VPS se usa el mismo esquema (ver guía de deploy, F0.13).
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: udex-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: udex
+      POSTGRES_PASSWORD: udex_dev
+      POSTGRES_DB: udex
+    ports:
+      - "5460:5432"
+    volumes:
+      - udex-db-data:/var/lib/postgresql/data
+
+volumes:
+  udex-db-data:

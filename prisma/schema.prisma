@@ -1,0 +1,10 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Los modelos se agregan por módulo siguiendo docs/02-modelo-de-datos.md (core en F0.4).
