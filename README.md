@@ -23,6 +23,7 @@ npm run db:seed:dev      # empresa demo + usuarios duenio@demo.local / cajero@de
 npm run superadmin -- soporte@udex.local "Soporte"   # crea el superadmin (muestra la clave generada)
 npm run dev              # http://localhost:3010 · salud: /api/health
 npm test                 # tests de unidad (node --test)
+npm run test:e2e tests/e2e/<archivo>.e2e.ts   # contra una base descartable "<db>_e2e" (nunca la tuya)
 ```
 
 ## Cómo leer el plan

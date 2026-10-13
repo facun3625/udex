@@ -204,7 +204,21 @@ Costo promedio ponderado (CPP) por variante y empresa, recalculado en cada recep
 Configurable por empresa y por depósito: `block` (default) | `warn` | `allow`. El POS de mostrador en
 algunos rubros necesita poder vender aunque el sistema diga 0.
 
-### 1.13 Códigos de barras (parte del núcleo de stock)
+### 1.13 Lo implementado en F1 (ver `prisma/schema.prisma`)
+
+`Unit` (solo `code`/`name`/`decimals`; conversiones entre unidades quedan para F2), `Product`,
+`Variant` (toda variante por ahora `isDefault`, sin ejes — los atributos/ejes llegan en F2), `Barcode`,
+`StockMovement`, `StockBalance` (único por `variantId+warehouseId`, sin `lotId` todavía), `StockReceipt`
++ `StockReceiptLine` (único por `receiptId+variantId`: re-escanear suma a la misma línea).
+`Warehouse.negativeStockPolicy` (`block`/`warn`/`allow`) reemplaza el campo que proponía este documento
+a nivel empresa: quedó a nivel depósito directamente, que es donde importa en la práctica.
+
+Lógica: `modules/catalog/barcodeFormat.ts` (dígito verificador GS1, normalización, generador de EAN
+interno), `modules/catalog/barcode.ts` (`resolveScan`, `diagnoseScan`), `modules/catalog/quickCreate.ts`
+(alta rápida de producto desde un código desconocido), `modules/inventory/post.ts`
+(`postStockMovements`, con `pg_advisory_xact_lock` por `variantId:warehouseId`), `modules/inventory/policy.ts`.
+
+### 1.13b Códigos de barras (parte del núcleo de stock)
 
 `Barcode { code, variantId, unitId?, factor }` se crea **junto con `Variant` en F1**, porque el ingreso de
 mercadería, la caja y el conteo se operan escaneando. Un código → una variante; una variante → muchos

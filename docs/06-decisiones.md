@@ -40,7 +40,7 @@ si se traba: usar un SDK y encapsularlo detrás de la misma interfaz `modules/fi
 **D-05 · Valorización por costo promedio ponderado** — Propuesta — CPP al inicio; FIFO después si algún
 rubro lo pide. — Es lo más usado en pymes y lo más simple de mantener.
 
-**D-06 · Todo producto tiene variante** — Propuesta — Producto simple = una variante por defecto. —
+**D-06 · Todo producto tiene variante** — Aceptada (2026-10-13, implementada en F1) — Producto simple = una variante por defecto. —
 Un solo camino para stock, precio y líneas de venta.
 
 **D-08 · Bases separadas ERP / tienda, sync por API + webhooks + pull** — Propuesta — Ver 04. — La tienda

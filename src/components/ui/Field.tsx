@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { forwardRef, useId } from "react";
 import { cx } from "./cx";
 
 // Etiqueta + control + ayuda/error. El control recibe id y aria-describedby por render prop para que la
@@ -36,9 +36,9 @@ export function Field({
   );
 }
 
-export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={cx("input", props.className)} />;
-}
+export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(function Input(props, ref) {
+  return <input ref={ref} {...props} className={cx("input", props.className)} />;
+});
 
 export function Select({ className, ...props }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return <select {...props} className={cx("input pr-8", className)} />;

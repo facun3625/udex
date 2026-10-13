@@ -22,7 +22,7 @@ export const MENU: MenuItem[] = [
   { href: "/", label: "Inicio", icon: "home", section: "Operación", ready: true },
   { href: "/caja", label: "Caja", icon: "pos", section: "Operación", permission: "pos.use", module: "pos", ready: false },
   { href: "/ventas", label: "Ventas", icon: "sales", section: "Operación", permission: "sales.view", ready: false },
-  { href: "/stock", label: "Stock", icon: "stock", section: "Operación", permission: "stock.view", ready: false },
+  { href: "/stock", label: "Stock", icon: "stock", section: "Operación", permission: ["stock.view", "stock.receive"], ready: true },
   { href: "/productos", label: "Productos", icon: "products", section: "Gestión", permission: "catalog.view", ready: false },
   { href: "/compras", label: "Compras", icon: "purchasing", section: "Gestión", permission: "purchasing.manage", module: "purchasing", ready: false },
   { href: "/tesoreria", label: "Caja y cobranzas", icon: "treasury", section: "Gestión", permission: "treasury.manage", module: "treasury", ready: false },

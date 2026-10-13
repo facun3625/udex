@@ -22,15 +22,15 @@ enum IvaCondition {
 // Razón social / CUIT. Una instalación (un cliente) puede tener varias: es común que el mismo dueño
 // facture con más de un CUIT. Stock, precios por lista y comprobantes son siempre por empresa.
 model Company {
-  id           String       @id @default(cuid())
-  legalName    String // razón social, tal cual figura en ARCA
-  tradeName    String? // nombre de fantasía
-  cuit         String       @unique // 11 dígitos, sin guiones
-  ivaCondition IvaCondition
-  iibbNumber   String? // ingresos brutos (se imprime en los comprobantes)
+  id                String       @id @default(cuid())
+  legalName         String // razón social, tal cual figura en ARCA
+  tradeName         String? // nombre de fantasía
+  cuit              String       @unique // 11 dígitos, sin guiones
+  ivaCondition      IvaCondition
+  iibbNumber        String? // ingresos brutos (se imprime en los comprobantes)
   activityStartDate DateTime? // inicio de actividades (también obligatorio en el comprobante)
-  address      String?
-  active       Boolean      @default(true)
+  address           String?
+  active            Boolean      @default(true)
 
   branches    Branch[]
   warehouses  Warehouse[]
@@ -63,18 +63,29 @@ enum WarehouseKind {
   logical // "En tránsito", "Fallados", "Consignación"
 }
 
+enum NegativeStockPolicy {
+  block // no deja que una venta/movimiento deje el saldo en negativo (default)
+  warn // lo deja pasar con un aviso en la UI
+  allow // lo deja pasar sin avisar (p.ej. mostrador que vende "a ciegas" por volumen)
+}
+
 model Warehouse {
-  id        String        @id @default(cuid())
-  companyId String
-  company   Company       @relation(fields: [companyId], references: [id], onDelete: Restrict)
-  branchId  String?
-  branch    Branch?       @relation(fields: [branchId], references: [id], onDelete: Restrict)
-  name      String
-  kind      WarehouseKind @default(physical)
+  id                  String              @id @default(cuid())
+  companyId           String
+  company             Company             @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  branchId            String?
+  branch              Branch?             @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  name                String
+  kind                WarehouseKind       @default(physical)
   // El depósito desde el que vende y recibe la sucursal si no se elige otro. Uno por sucursal (se valida
   // en modules/core al guardar: Postgres no permite un unique parcial desde Prisma).
-  isBranchDefault Boolean @default(false)
-  active    Boolean       @default(true)
+  isBranchDefault     Boolean             @default(false)
+  active              Boolean             @default(true)
+  negativeStockPolicy NegativeStockPolicy @default(block)
+
+  stockMovements StockMovement[]
+  stockBalances  StockBalance[]
+  stockReceipts  StockReceipt[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -85,14 +96,14 @@ model Warehouse {
 }
 
 model User {
-  id           String  @id @default(cuid())
+  id           String    @id @default(cuid())
   name         String
-  email        String  @unique // siempre en minúsculas
+  email        String    @unique // siempre en minúsculas
   passwordHash String
   // Desarrollador / soporte: todos los permisos en todas las empresas, edita la licencia, y no aparece
   // en la lista de usuarios del cliente. Se crea solo por consola (scripts/create-superadmin.ts).
-  isSuperadmin Boolean @default(false)
-  active       Boolean @default(true)
+  isSuperadmin Boolean   @default(false)
+  active       Boolean   @default(true)
   lastLoginAt  DateTime?
 
   memberships Membership[]
@@ -214,4 +225,219 @@ model OutboxEvent {
   processedAt   DateTime?
 
   @@index([status, nextAttemptAt])
+}
+
+// =====================================================================================================
+// CATALOG — unidades, productos, variantes (SKU) y códigos de barras. Ver docs/02-modelo-de-datos.md §2
+// y docs/08-codigos-de-barras.md. Todo producto tiene al menos una variante (D-06): la simple tiene una
+// sola, marcada isDefault, invisible en la UI — así el stock y las ventas siempre apuntan a variantId.
+// =====================================================================================================
+
+// un, kg, g, m, cm, lt, ml, caja, par, docena... `decimals` = cuántos decimales admite la cantidad
+// (0 para "un", 3 para "kg"). Las conversiones entre unidades (1 caja = 12 un) llegan en F2.
+model Unit {
+  id        String @id @default(cuid())
+  companyId String
+  code      String // "un", "kg"
+  name      String
+  decimals  Int    @default(0)
+
+  products Product[]
+
+  @@unique([companyId, code])
+}
+
+enum ProductType {
+  standard
+  service // no controla stock (trackStock siempre false)
+  kit // F2.10: se arma de componentes
+}
+
+enum ProductStatus {
+  draft
+  active
+  archived
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  companyId   String
+  name        String
+  slug        String
+  type        ProductType   @default(standard)
+  status      ProductStatus @default(draft)
+  description String?
+
+  baseUnitId String
+  baseUnit   Unit    @relation(fields: [baseUnitId], references: [id], onDelete: Restrict)
+  ivaRate    Decimal @default(21) @db.Decimal(5, 2)
+
+  trackStock   Boolean @default(true)
+  trackLots    Boolean @default(false) // F2.11
+  trackSerials Boolean @default(false) // F2.11
+
+  variants Variant[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, slug])
+  @@index([companyId, status])
+}
+
+model Variant {
+  id        String  @id @default(cuid())
+  companyId String
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku       String
+  isDefault Boolean @default(false) // true = la variante única de un producto simple (sin ejes)
+  enabled   Boolean @default(true)
+
+  barcodes          Barcode[]
+  stockMovements    StockMovement[]
+  stockBalances     StockBalance[]
+  stockReceiptLines StockReceiptLine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, sku])
+  @@index([productId])
+}
+
+enum BarcodeType {
+  ean13
+  ean8
+  upca
+  code128
+  internal // generado por Udex para productos sin código de fábrica
+}
+
+// Un código → una sola variante. Una variante puede tener varios códigos (fabricante, caja con `factor`,
+// interno). Ver docs/08-codigos-de-barras.md §2-3.
+model Barcode {
+  id        String      @id @default(cuid())
+  companyId String
+  code      String
+  variantId String
+  variant   Variant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  unitId    String? // null = unidad base del producto
+  factor    Decimal     @default(1) @db.Decimal(18, 6) // cuántas unidades base entran/salen por escaneo
+  type      BarcodeType @default(ean13)
+  isPrimary Boolean     @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, code])
+  @@index([variantId])
+}
+
+// =====================================================================================================
+// INVENTORY — ledger de stock (inmutable) + saldos materializados + ingreso de mercadería por escaneo.
+// Ver docs/02-modelo-de-datos.md §1 y docs/08-codigos-de-barras.md §6.
+// =====================================================================================================
+
+enum StockMovementType {
+  initial
+  purchase_receipt
+  purchase_return
+  sale
+  sale_return
+  adjustment
+  count
+  transfer_out
+  transfer_in
+  kit_assembly
+  kit_disassembly
+}
+
+// Cada cambio de stock es una fila. NUNCA se edita ni se borra: un error se corrige con un movimiento
+// inverso. El saldo (StockBalance) se actualiza en la misma transacción, bajo lock — ver
+// modules/inventory/post.ts.
+model StockMovement {
+  id          String            @id @default(cuid())
+  companyId   String
+  variantId   String
+  variant     Variant           @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  warehouseId String
+  warehouse   Warehouse         @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  quantity    Decimal           @db.Decimal(18, 4) // con signo: + entra, - sale. En unidad base.
+  unitCost    Decimal?          @db.Decimal(18, 4) // costo unitario de una entrada (valorización, F1.10)
+  type        StockMovementType
+
+  // Documento que lo originó.
+  sourceType     String
+  sourceId       String
+  sourceLineId   String?
+  idempotencyKey String? @unique
+  note           String?
+  userId         String?
+
+  createdAt DateTime @default(now())
+
+  @@index([companyId, variantId, warehouseId, createdAt])
+  @@index([sourceType, sourceId])
+}
+
+// Saldo materializado: se mantiene igual a la suma del ledger (actualizado en la misma transacción que
+// cada movimiento). disponible = onHand - reserved (se calcula, no se guarda).
+model StockBalance {
+  id          String    @id @default(cuid())
+  companyId   String
+  variantId   String
+  variant     Variant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  onHand      Decimal   @default(0) @db.Decimal(18, 4)
+  reserved    Decimal   @default(0) @db.Decimal(18, 4)
+  incoming    Decimal   @default(0) @db.Decimal(18, 4)
+
+  @@unique([variantId, warehouseId])
+  @@index([companyId, warehouseId])
+}
+
+enum StockReceiptStatus {
+  draft
+  confirmed
+  cancelled
+}
+
+// Ingreso de mercadería por escaneo (docs/08-codigos-de-barras.md §6). En F6 se le suma
+// purchaseOrderId/supplierId reales; por ahora el proveedor es solo un texto de referencia.
+model StockReceipt {
+  id             String             @id @default(cuid())
+  companyId      String
+  warehouseId    String
+  warehouse      Warehouse          @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  status         StockReceiptStatus @default(draft)
+  supplierName   String?
+  supplierDocRef String?
+  userId         String
+
+  lines StockReceiptLine[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  confirmedAt DateTime?
+
+  @@index([companyId, status])
+}
+
+model StockReceiptLine {
+  id          String       @id @default(cuid())
+  receiptId   String
+  receipt     StockReceipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  variantId   String
+  variant     Variant      @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  quantity    Decimal      @db.Decimal(18, 4)
+  unitCost    Decimal?     @db.Decimal(18, 4)
+  scannedCode String? // el código tal cual lo leyó la pistola (trazabilidad)
+  sortOrder   Int          @default(0)
+
+  createdAt DateTime @default(now())
+
+  // Escanear el mismo producto otra vez suma a esta misma línea en vez de crear otra (docs/08 §6).
+  @@unique([receiptId, variantId])
+  @@index([receiptId])
 }

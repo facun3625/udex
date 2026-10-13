@@ -16,3 +16,10 @@ Una línea por tarea terminada: `AAAA-MM-DD · F<fase>.<n> · descripción · qu
 - 2026-10-13 · F0.14 · Asistente de alta de empresa (`/onboarding`, solo superadmin): CUIT validado, sucursal y depósito por defecto, rubro · Claude
 - 2026-10-13 · F0.6c · Usuarios y roles: alta/baja, múltiples accesos por sucursal, contraseña generada (se muestra una vez), roles propios con permisos, límites de licencia, autoprotección contra autobloqueo · Claude
 - 2026-10-13 · F0.8 · Kit UI (tokens de color, Button, Field, DecimalInput, Card, Badge, Alert, DataTable, filtros por URL, toasts, confirmación) + pantalla de Auditoría · Claude
+- 2026-10-13 · F1 · Stock con código de barras, de punta a punta (modelo, lógica y pantallas):
+  Unit/Product/Variant/Barcode; resolveScan con EAN-13/EAN-8/UPC-A (dígito verificador GS1), generador
+  de EAN interno y detector de lector mal configurado; StockMovement/StockBalance con
+  pg_advisory_xact_lock (25 transacciones concurrentes sin perder ninguna, probado contra Postgres real);
+  política de stock negativo por depósito; ScanInput (pistola/teclado, multiplicador "6*", bip);
+  ingreso de mercadería por escaneo con alta rápida de producto desde un código desconocido; pantalla
+  "Probar lector"; infraestructura de tests e2e (tests/e2e/run.cjs, base `_e2e` descartable) · Claude

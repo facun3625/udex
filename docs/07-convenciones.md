@@ -46,6 +46,11 @@ Basadas en cómo está hecho corto, con los ajustes que pide un ERP.
   movimientos, se compensan.
 - Comprobantes con CAE **no se borran nunca**.
 - Migraciones: `prisma migrate dev --name <accion_modelo>`; nunca editar una migración aplicada.
+  Si el entorno es no interactivo (un agente de IA, CI) y Prisma pide confirmar porque detecta posible
+  pérdida de datos (índice único nuevo, etc.), `migrate dev` directamente falla en vez de preguntar. Con
+  la tabla vacía o sin filas duplicadas eso es solo el modo interactivo molestando: generar el SQL con
+  `npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script`, pegarlo a
+  mano en `prisma/migrations/<timestamp>_<nombre>/migration.sql` y aplicarlo con `prisma migrate deploy`.
 - Operaciones que tocan stock o numeración: transacción + `pg_advisory_xact_lock` en orden estable.
 
 ## Tests
