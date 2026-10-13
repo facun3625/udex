@@ -31,8 +31,22 @@ No hardcodear nada de un rubro. En vez de campos fijos como `talle` o `color`, e
 6. **Plantillas de rubro** al dar de alta una empresa: precargan atributos, plantillas, unidades y categorías
    típicas (indumentaria, ferretería, almacén, etc.). Son solo datos semilla, no lógica especial.
 
+## Modelo de negocio
+
+Udex es un **producto que se vende** a negocios: el desarrollador lo instala y mantiene (una instalación
+por cliente, D-01) y los empleados del cliente lo usan todos los días. Por eso:
+
+- El desarrollador es **superadmin** en cada instalación (soporte, alta de administradores, módulos);
+  no aparece en la lista de usuarios del cliente (como en corto).
+- Los **módulos se habilitan por cliente** (licencia): se pueden armar planes.
+- Todo tiene que poder configurarlo el cliente solo, con asistentes y textos claros, sin pedir cambios
+  de código. Cada consulta de soporte evitada es plata.
+- El hardware (lectores, impresoras, balanzas) lo compra el cliente: Udex tiene que funcionar con
+  equipos genéricos y traer una pantalla de diagnóstico.
+
 ## Usuarios
 
+- **Superadmin (desarrollador / soporte)**: instala, habilita módulos, da soporte. Invisible para el cliente.
 - **Dueño / administrador**: configura todo, ve reportes.
 - **Vendedor / cajero**: punto de venta, presupuestos, cobranzas.
 - **Depósito**: recepciones, transferencias, conteos.

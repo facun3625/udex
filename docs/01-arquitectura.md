@@ -78,9 +78,29 @@ Regla: `app/` llama a `modules/`; `modules/` no importa nada de `app/` ni de Rea
 
 ## 5. Permisos
 
+El superadmin tiene todos los permisos y no figura en la lista de usuarios del cliente.
+
 Roles con permisos granulares (`sales.create`, `sales.void`, `stock.adjust`, `fiscal.issue`,
 `prices.edit`, `reports.view`...). Roles semilla: Dueño, Administrador, Vendedor, Cajero, Depósito,
 Contador. El usuario puede tener rol distinto por sucursal. Toda acción sensible se re-valida en el servidor.
+
+## 5b. Licencia y módulos
+
+`InstallationLicense` (una fila): cliente, plan, módulos habilitados (`pos`, `fiscal_arca`, `channels`,
+`multi_branch`, `purchasing`, `treasury`, `reports_advanced`...), límites (empresas, sucursales, usuarios)
+y vencimiento. Solo la edita el superadmin. Un helper `requireModule(ctx, "fiscal_arca")` protege
+páginas, acciones y API; el menú oculta lo no contratado. Al vencer: aviso y luego solo lectura (nunca se
+bloquea el acceso a los datos ni a los comprobantes ya emitidos).
+
+## 5c. Operar muchas instalaciones
+
+- Mismo código y misma versión para todos los clientes; diferencias solo por configuración y módulos.
+- `scripts/update-all.sh`: recorre las instalaciones del VPS (lista en un archivo fuera del repo), hace
+  backup de la base, `git pull`, `npm ci`, `prisma migrate deploy`, build y `pm2 reload`, y se frena en el
+  primer error.
+- **Migraciones siempre compatibles hacia adelante**: agregar columnas con default o nullable, nunca
+  borrar/renombrar en el mismo release en que se deja de usar (expand → migrate → contract).
+- `/api/health` devuelve versión y estado; panel del superadmin con versión instalada.
 
 ## 6. Auditoría
 

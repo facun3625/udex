@@ -20,6 +20,21 @@ se usa en tres pantallas:
 - **Balanza con etiqueta** (almacén, carnicería, verdulería): códigos EAN-13 de peso o precio variable
   (ver §5).
 
+## 1b. Hardware de cada cliente
+
+Udex se vende y cada cliente compra su lector: tiene que funcionar con cualquier lector genérico en modo
+teclado (USB con cable, inalámbrico con receptor, Bluetooth). Recomendación para clientes (ir a
+`docs/hardware.md`): **caja** → láser omnidireccional 1D con cable (barato, rápido); **depósito** →
+inalámbrico 1D/2D con receptor USB; sin presupuesto → cámara del celular.
+
+Pantalla **Configuración → Equipos → Probar lector**: el usuario escanea un código de prueba impreso
+desde la misma pantalla y Udex detecta:
+- no llega Enter → "Configurá el sufijo Enter escaneando este código del manual de tu lector";
+- caracteres cambiados (`'` en vez de `-`, `ñ`...) → teclado del lector en otro idioma;
+- escaneo lento o cortado → lector en modo inadecuado / batería.
+Además `resolveScan` normaliza lo más común (descarta caracteres no imprimibles, corrige el `-` de
+teclado US/ES en Code128) para que un lector mal configurado igual funcione con EAN.
+
 ## 2. Modelo
 
 ```prisma

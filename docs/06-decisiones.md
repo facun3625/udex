@@ -23,6 +23,11 @@ instancia y base (como hoy las tiendas); dentro, varias empresas (CUIT) y sucurs
 — Coincide con cómo se despliega todo hoy; aislamiento total entre clientes. Si en el futuro se quiere
 SaaS compartido, el `companyId` ya está y se agrega un nivel `Tenant`.
 
+**D-15 · Udex es un producto para revender** — Aceptada (2026-10-13) — El desarrollador vende e instala
+Udex; los usuarios finales son los empleados de cada cliente. Superadmin invisible, módulos habilitables
+por licencia, pantallas de diagnóstico de hardware, manual de usuario y actualización masiva de
+instalaciones. — Lo indicó la persona: "vendo el sistema, luego las personas usarán el sistema".
+
 ## Propuestas (con recomendación, falta confirmar)
 
 **D-02 · Catálogo compartido entre empresas de una instalación** — Propuesta — Productos compartidos;

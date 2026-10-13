@@ -15,7 +15,8 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
 - [x] F0.3 `src/lib/money.ts`: helpers de `Decimal` (sumar, redondear 2 dec, formatear ARS/USD) + tests.
 - [ ] F0.4 Modelos core: `Company`, `Branch`, `Warehouse`, `User`, `Role`, `Permission`, `UserBranchRole`, `AuditLog`, `Sequence`, `Setting`, `OutboxEvent`.
 - [ ] F0.5 NextAuth 5 (Credentials), login, selector de empresa/sucursal en la sesión.
-- [ ] F0.6 Permisos: helper `requirePermission(ctx, "x.y")` + roles semilla.
+- [ ] F0.6 Permisos: helper `requirePermission(ctx, "x.y")` + roles semilla. Superadmin con todo, invisible en la lista de usuarios.
+- [ ] F0.6b Licencia y módulos (`InstallationLicense`, `requireModule`, menú según módulos). Ver arquitectura §5b.
 - [ ] F0.7 Layout del panel (sidebar por módulo, buscador global, modo oscuro).
 - [ ] F0.8 Componentes base: tabla con paginación/filtros server-side, formulario, diálogo de confirmación, toasts.
 - [ ] F0.9 `src/lib/r2.ts` (Cloudflare R2, igual que corto) + subida de imágenes con thumbnail (sharp).
@@ -23,12 +24,14 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
 - [ ] F0.11 Worker PM2 (`npm run worker`) que procesa `OutboxEvent` con reintentos.
 - [ ] F0.12 Infra de tests: `node --test` + e2e con base `<db>_e2e` (copiar el patrón de corto).
 - [ ] F0.13 `scripts/deploy.sh`, `.env.example`, guía VPS (basada en `guia_nueva_app.md` de corto).
+- [ ] F0.13b `scripts/update-all.sh` (actualizar todas las instalaciones con backup previo) + versión en `/api/health`. Ver arquitectura §5c.
 - [ ] F0.14 Asistente de alta de empresa: CUIT, razón social, condición IVA, sucursal y depósito inicial, plantilla de rubro.
 
 ## F1 — Núcleo de stock (ver 02 §1)
 
 - [ ] F1.1 Modelos `Unit`, `UnitConversion`, `Product`, `Variant` y **`Barcode`** mínimos (los necesarios para tener SKU escaneable).
 - [ ] F1.1b `modules/catalog/barcode.ts`: `resolveScan` (EAN-13/8/UPC, verificador, factor de caja, SKU, desconocido) + generador de EAN internos + tests. Ver 08 §3.
+- [ ] F1.1d Pantalla **"Probar lector"** (Configuración → Equipos): escanear un código de prueba y detectar falta de Enter, teclado en otro idioma o caracteres raros, con la solución en pantalla. Ver 08 §1b.
 - [ ] F1.1c Componente `ScanInput` (pistola HID, Enter, multiplicador `6*`, bip ok/error, re-foco, suma en la misma línea). Ver 08 §4.
 - [ ] F1.2 `StockMovement` + `StockBalance` + `modules/inventory/post.ts` (registrar movimientos en transacción con advisory lock, actualizar saldo). Tests de concurrencia.
 - [ ] F1.3 Política de stock negativo (block/warn/allow) por empresa y depósito.
@@ -117,6 +120,12 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
 - [ ] F8.2 Stock valorizado, rotación, sin movimiento, por vencer.
 - [ ] F8.3 Libro IVA ventas/compras + exportación para Libro IVA Digital.
 - [ ] F8.4 Ranking de productos, clientes; exportación CSV/Excel de todo listado.
+
+## Transversal (se va completando en cada fase)
+
+- [ ] Manual de usuario final por módulo (`docs/manual/`), con capturas, como el de corto.
+- [ ] `docs/hardware.md`: lectores, impresoras de tickets y etiquetas y balanzas recomendados para clientes.
+- [ ] Ayuda contextual en cada pantalla ("¿Qué es esto?") y estados vacíos que explican qué hacer.
 
 ## F9 — Avanzado
 
