@@ -448,3 +448,12 @@ Implementado en F0.4 (ver `prisma/schema.prisma`): `Company`, `Branch`, `Warehou
   permisos. Índice único con `NULLS NOT DISTINCT`.
 - **Empresa/sucursal activa**: cookie `udex_branch` con el id de la sucursal; en cada pedido se valida
   contra los accesos reales (`modules/core/scope.ts`).
+- **Alta de empresa** (F0.14, solo superadmin, `/onboarding`): crea `Company` + `Branch` + `Warehouse`
+  por defecto en una transacción, y guarda el rubro elegido en `Setting{scope: companyId, key:
+  "industry"}` (catálogo en `modules/core/industries.ts`; todavía no precarga nada, eso es F2.9).
+- **Usuarios y roles** (F0.6c, `/configuracion/usuarios` y `/configuracion/roles`): alta de usuario con
+  contraseña generada (se muestra una sola vez), múltiples accesos por usuario (una fila de `Membership`
+  por sucursal o "todas"), desactivar/reactivar, restablecer contraseña, roles propios (`Role.isSystem =
+  false`) con permisos elegidos de una casilla por permiso. Reglas en `modules/core/rules.ts`: límite de
+  sucursales/usuarios según la licencia, y nadie puede sacarse a sí mismo el último acceso que le permite
+  administrar usuarios en su sucursal (`keepsPermission`).

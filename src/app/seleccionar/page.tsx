@@ -32,9 +32,11 @@ export default async function SelectBranchPage() {
 
       {groups.length === 0 ? (
         <div className="rounded-xl border bg-warn-soft p-5 text-sm text-warn">
-          {user.isSuperadmin
-            ? "Todavía no hay ninguna empresa cargada en esta instalación."
-            : "Tu usuario todavía no tiene acceso a ninguna sucursal. Pedile al administrador que te lo dé."}
+          {user.isSuperadmin ? (
+            <>Todavía no hay ninguna empresa cargada en esta instalación. <a href="/onboarding" className="font-medium underline">Crear la primera empresa</a></>
+          ) : (
+            "Tu usuario todavía no tiene acceso a ninguna sucursal. Pedile al administrador que te lo dé."
+          )}
         </div>
       ) : (
         groups.map(({ company, branches }) => (

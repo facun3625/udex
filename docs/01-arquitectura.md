@@ -81,7 +81,10 @@ Regla: `app/` llama a `modules/`; `modules/` no importa nada de `app/` ni de Rea
 El superadmin tiene todos los permisos y no figura en la lista de usuarios del cliente.
 
 Implementación: `src/modules/core/context.ts` (`requireContext`, `requirePermission`, `requireModule`,
-`requireWritable`), roles de sistema en `permissions.ts`, sembrados con `ensureSystemRoles`.
+`requireWritable`), roles de sistema en `permissions.ts`, sembrados con `ensureSystemRoles`. Reglas de
+negocio puras (límites de licencia, autoprotección de accesos, slug de rol, generador de contraseñas) en
+`modules/core/rules.ts`, con tests. Pantallas en `/configuracion` (hub según permisos), alta de empresa en
+`/onboarding` (solo superadmin).
 
 Roles con permisos granulares (`sales.create`, `sales.void`, `stock.adjust`, `fiscal.issue`,
 `prices.edit`, `reports.view`...). Roles semilla: Dueño, Administrador, Vendedor, Cajero, Depósito,

@@ -37,5 +37,14 @@ test('menu hides items without permission or module', () => {
   assert.ok(hrefs.includes('/'));
   assert.ok(hrefs.includes('/stock'));
   assert.ok(!hrefs.includes('/caja'), 'pos module not licensed');
-  assert.ok(!hrefs.includes('/configuracion'), 'no settings permission');
+  assert.ok(!hrefs.includes('/configuracion'), 'neither settings.manage nor users.manage');
+});
+
+test('menu: an item with several permissions is visible with any one of them (OR)', () => {
+  const onlyUsers = visibleMenu(MENU, (p) => p === 'users.manage', () => true).map((i) => i.href);
+  const onlySettings = visibleMenu(MENU, (p) => p === 'settings.manage', () => true).map((i) => i.href);
+  const neither = visibleMenu(MENU, () => false, () => true).map((i) => i.href);
+  assert.ok(onlyUsers.includes('/configuracion'));
+  assert.ok(onlySettings.includes('/configuracion'));
+  assert.ok(!neither.includes('/configuracion'));
 });

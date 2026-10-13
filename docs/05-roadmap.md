@@ -17,8 +17,8 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
 - [x] F0.5 NextAuth 5 (Credentials), login, selector de empresa/sucursal en la sesión.
 - [x] F0.6 Permisos: helper `requirePermission(ctx, "x.y")` + roles semilla. Superadmin con todo, invisible en la lista de usuarios.
 - [x] F0.6b Licencia y módulos (`InstallationLicense`, `requireModule`, menú según módulos). Ver arquitectura §5b.
-  > Pendiente: hacer cumplir `maxCompanies` / `maxBranches` / `maxUsers` al crear empresas, sucursales y usuarios (F0.6c y F0.14).
-- [ ] F0.6c ABM de usuarios (alta, baja, reset de contraseña) y de roles propios; asignar accesos por empresa/sucursal. Superadmin oculto en la lista. Respeta `maxUsers`.
+- [x] F0.6c ABM de usuarios (alta, baja, reset de contraseña) y de roles propios; asignar accesos por empresa/sucursal. Superadmin oculto en la lista. Respeta `maxUsers`.
+  > Pendiente: `maxCompanies` todavía no se hace cumplir (no hay ABM de empresas desde el panel, solo onboarding por el superadmin). Un usuario solo se gestiona en la empresa activa (sin pantalla para administrar sus accesos en otras empresas).
 - [x] F0.7 Layout del panel (sidebar por módulo, buscador global, modo oscuro).
   > Pendiente: la paleta Ctrl+K hoy solo navega; sumar búsqueda de productos/clientes/ventas cuando existan.
 - [x] F0.8 Componentes base: tabla con paginación/filtros server-side, formulario, diálogo de confirmación, toasts.
@@ -28,7 +28,8 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
 - [ ] F0.12 Infra de tests: `node --test` + e2e con base `<db>_e2e` (copiar el patrón de corto).
 - [ ] F0.13 `scripts/deploy.sh`, `.env.example`, guía VPS (basada en `guia_nueva_app.md` de corto).
 - [ ] F0.13b `scripts/update-all.sh` (actualizar todas las instalaciones con backup previo) + versión en `/api/health`. Ver arquitectura §5c.
-- [ ] F0.14 Asistente de alta de empresa: CUIT, razón social, condición IVA, sucursal y depósito inicial, plantilla de rubro.
+- [x] F0.14 Asistente de alta de empresa: CUIT, razón social, condición IVA, sucursal y depósito inicial, plantilla de rubro.
+  > Pendiente: el rubro solo se guarda (Setting); todavía no precarga nada (eso es F2.9). Sin edición de domicilio/Ingresos Brutos desde el panel (llega con F4, ARCA).
 
 ## F1 — Núcleo de stock (ver 02 §1)
 

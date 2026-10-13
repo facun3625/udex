@@ -13,4 +13,6 @@ Una línea por tarea terminada: `AAAA-MM-DD · F<fase>.<n> · descripción · qu
 - 2026-10-13 · F0.6 · Catálogo de permisos, roles de sistema, `requireContext`/`requirePermission`, superadmin por consola · Claude
 - 2026-10-13 · F0.6b · Licencia y módulos (`requireModule`, `requireWritable`, menú filtrado, pantalla del superadmin) · Claude
 - 2026-10-13 · F0.7 · Panel: menú agrupado con íconos, cajón en celular, empresa/sucursal en el encabezado, modo oscuro, paleta Ctrl+K · Claude
+- 2026-10-13 · F0.14 · Asistente de alta de empresa (`/onboarding`, solo superadmin): CUIT validado, sucursal y depósito por defecto, rubro · Claude
+- 2026-10-13 · F0.6c · Usuarios y roles: alta/baja, múltiples accesos por sucursal, contraseña generada (se muestra una vez), roles propios con permisos, límites de licencia, autoprotección contra autobloqueo · Claude
 - 2026-10-13 · F0.8 · Kit UI (tokens de color, Button, Field, DecimalInput, Card, Badge, Alert, DataTable, filtros por URL, toasts, confirmación) + pantalla de Auditoría · Claude
