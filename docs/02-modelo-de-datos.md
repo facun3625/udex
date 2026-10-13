@@ -336,6 +336,26 @@ plantillas y categorías. Solo datos.
 - `Brand` (marca).
 - `Tag` libre.
 
+### 2.3b Lo implementado en F2.3b (ver `prisma/schema.prisma`)
+
+`Category` (árbol con `parentId`, sin SEO/imagen/orden todavía — eso es F2.3/F2.9). Precio **plano**
+(`Variant.price`/`compareAtPrice`/`costPrice`) en vez del sistema de `PriceList` de 2.4: ver D-16.
+
+Lógica: `modules/catalog/categories.ts` (`categoryOptions`: arma la jerarquía + opciones indentadas para
+un `<select>`), `modules/catalog/completeness.ts` (qué le falta a un producto para poder venderse — hoy
+solo el precio es bloqueante).
+
+**Dos bugs reales que aparecieron armando `/productos/[id]` y vale la pena no repetir:**
+1. Un `<form>` de React (alta rápida de categoría) quedó anidado dentro de otro `<form>` (el de "Datos
+   generales") porque ambos vivían en el mismo árbol de componentes. El HTML no admite formularios
+   anidados: el navegador reacomoda el DOM solo y el submit termina en el formulario equivocado, sin
+   ningún error claro en la consola de React hasta mirar el log del server. Un formulario secundario que
+   se abre desde dentro de otro formulario va en un `<dialog>` (o un modal) renderizado con
+   `createPortal(..., document.body)`, nunca como JSX anidado.
+2. Un objeto `Decimal` de Prisma pasado directo de un Server Component a un Client Component revienta
+   con "Only plain objects can be passed to Client Components". Antes de pasarle a un componente cliente
+   una fila que viene de Prisma, mapear solo los campos planos que necesita (`.toString()` los Decimal).
+
 ### 2.4 Precios
 
 ```prisma

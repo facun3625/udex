@@ -259,6 +259,26 @@ enum ProductStatus {
   archived
 }
 
+// Árbol de categorías (sin límite de niveles). Minimalista a propósito: F2 le suma SEO, imagen y orden
+// cuando haya una tienda mostrándolas; por ahora solo organiza el catálogo interno.
+model Category {
+  id        String     @id @default(cuid())
+  companyId String
+  name      String
+  slug      String
+  parentId  String?
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Category[] @relation("CategoryTree")
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, slug])
+  @@index([companyId, parentId])
+}
+
 model Product {
   id          String        @id @default(cuid())
   companyId   String
@@ -267,6 +287,9 @@ model Product {
   type        ProductType   @default(standard)
   status      ProductStatus @default(draft)
   description String?
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   baseUnitId String
   baseUnit   Unit    @relation(fields: [baseUnitId], references: [id], onDelete: Restrict)
@@ -293,6 +316,14 @@ model Variant {
   sku       String
   isDefault Boolean @default(false) // true = la variante única de un producto simple (sin ejes)
   enabled   Boolean @default(true)
+
+  // Precio simplificado (D-16): un precio plano por variante en vez del sistema completo de listas de
+  // precios (PriceList/PriceListItem) que describe docs/02-modelo-de-datos.md §2.4 — ese llega en F2.7.
+  // Vive en la variante (no en el producto) porque el precio puede variar entre talles/colores; hoy
+  // todo producto tiene una sola variante, así que en la práctica es "el precio del producto".
+  price          Decimal  @default(0) @db.Decimal(18, 4)
+  compareAtPrice Decimal? @db.Decimal(18, 4) // precio de lista tachado, para mostrar un descuento
+  costPrice      Decimal? @db.Decimal(18, 4) // costo manual; F1.10 lo reemplaza por el costo promedio
 
   barcodes          Barcode[]
   stockMovements    StockMovement[]

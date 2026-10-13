@@ -49,6 +49,13 @@ sigue vendiendo si el ERP cae; cada sistema se despliega por separado.
 **D-09 · Reserva de stock sincrónica en el checkout web con fallback local** — Propuesta — Ver 04 §4–5. —
 Evita sobreventa entre mostrador y web sin frenar la tienda si el ERP no responde.
 
+**D-16 · Precio plano en `Variant` en vez de listas de precios** — Aceptada (2026-10-13, implementada
+en F2.3b) — `Variant.price`/`compareAtPrice`/`costPrice` directos, no el sistema completo de
+`PriceList`/`PriceListItem` de la sección 2.4 de este documento. — Hacía falta poder cargar un precio
+desde ya; el sistema de listas (varias monedas, mayorista/minorista, escalas) es mucho más trabajo y hoy
+no hay nada que lo necesite. F2.7 lo reemplaza sin tocar lo que ya existe (se migra el valor plano a la
+lista "Minorista" por defecto).
+
 ## Pendientes (preguntar a la persona)
 
 **D-07 · Generación de PDF** — `@react-pdf/renderer` (liviano, sin navegador) vs HTML→PDF con Playwright
