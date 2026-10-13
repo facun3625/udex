@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PackagePlus } from "lucide-react";
+import { PackagePlus, SlidersHorizontal } from "lucide-react";
 import { can, requireContext } from "@/modules/core/context";
 import { PageHeader } from "@/components/ui/Card";
 
@@ -9,6 +9,7 @@ export default async function StockHubPage() {
   const ctx = await requireContext();
   const cards = [
     { href: "/stock/ingresos", icon: PackagePlus, title: "Ingreso de mercadería", description: "Escaneá lo que llega y sumá la cantidad", visible: can(ctx, "stock.receive") },
+    { href: "/stock/ajustes", icon: SlidersHorizontal, title: "Ajustes de stock", description: "Corregir rotura, robo, obsequio o un error de carga", visible: can(ctx, "stock.adjust") },
   ].filter((c) => c.visible);
 
   return (

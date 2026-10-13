@@ -23,6 +23,11 @@ Una línea por tarea terminada: `AAAA-MM-DD · F<fase>.<n> · descripción · qu
   política de stock negativo por depósito; ScanInput (pistola/teclado, multiplicador "6*", bip);
   ingreso de mercadería por escaneo con alta rápida de producto desde un código desconocido; pantalla
   "Probar lector"; infraestructura de tests e2e (tests/e2e/run.cjs, base `_e2e` descartable) · Claude
+- 2026-10-13 · F1.6 y F1.9 · Ajustes de stock (StockAdjustment, motivo obligatorio, escaneo con toggle
+  suma/resta, respeta la política de stock negativo del depósito) y kardex por producto
+  (/productos/[id]/movimientos). Probado con navegador: ajuste positivo y negativo sobre dos
+  productos, bloqueo correcto al intentar restar más stock del disponible (el ajuste queda en
+  borrador, sin movimiento creado) · Claude
 - 2026-10-13 · F2.3b · Primer corte de Productos: Category (árbol), precio plano en Variant (D-16),
   listado /productos, alta manual /productos/nuevo, edición completa /productos/[id] (categoría con
   alta rápida en diálogo, precio, SKU, códigos de barras). Corregidos dos bugs reales encontrados

@@ -101,9 +101,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </Card>
       )}
 
-      {variant && variant.stockBalances.length > 0 && (
+      {variant && (
         <Card className="p-5">
-          <h2 className="mb-3 font-medium">Stock</h2>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-medium">Stock</h2>
+            <Link href={`/productos/${product.id}/movimientos`} className="text-sm underline">Ver movimientos</Link>
+          </div>
           <ul className="flex flex-col divide-y divide-line">
             {variant.stockBalances.map((b) => (
               <li key={b.id} className="flex items-center justify-between py-2 text-sm">
@@ -112,7 +115,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-xs text-muted">El stock se carga desde Stock → Ingreso de mercadería; acá es solo lectura.</p>
+          {variant.stockBalances.length === 0 && <p className="text-sm text-muted">Sin stock cargado todavía.</p>}
+          <p className="mt-2 text-xs text-muted">El stock se carga desde Stock → Ingreso de mercadería o Ajustes; acá es solo lectura.</p>
         </Card>
       )}
     </div>

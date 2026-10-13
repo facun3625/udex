@@ -83,9 +83,10 @@ model Warehouse {
   active              Boolean             @default(true)
   negativeStockPolicy NegativeStockPolicy @default(block)
 
-  stockMovements StockMovement[]
-  stockBalances  StockBalance[]
-  stockReceipts  StockReceipt[]
+  stockMovements   StockMovement[]
+  stockBalances    StockBalance[]
+  stockReceipts    StockReceipt[]
+  stockAdjustments StockAdjustment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -325,10 +326,11 @@ model Variant {
   compareAtPrice Decimal? @db.Decimal(18, 4) // precio de lista tachado, para mostrar un descuento
   costPrice      Decimal? @db.Decimal(18, 4) // costo manual; F1.10 lo reemplaza por el costo promedio
 
-  barcodes          Barcode[]
-  stockMovements    StockMovement[]
-  stockBalances     StockBalance[]
-  stockReceiptLines StockReceiptLine[]
+  barcodes             Barcode[]
+  stockMovements       StockMovement[]
+  stockBalances        StockBalance[]
+  stockReceiptLines    StockReceiptLine[]
+  stockAdjustmentLines StockAdjustmentLine[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -471,4 +473,55 @@ model StockReceiptLine {
   // Escanear el mismo producto otra vez suma a esta misma línea en vez de crear otra (docs/08 §6).
   @@unique([receiptId, variantId])
   @@index([receiptId])
+}
+
+enum StockAdjustmentStatus {
+  draft
+  confirmed
+  cancelled
+}
+
+// Motivo del documento completo (F1.6): una corrección real siempre tiene UN porqué, no uno por línea.
+enum StockAdjustmentReason {
+  breakage // rotura
+  theft // robo / faltante
+  gift // obsequio / promoción
+  count_error // corrección de un error de carga anterior
+  other
+}
+
+// Ajuste manual de stock, mismo patrón de borrador→confirmar que StockReceipt, pero con cantidad CON
+// SIGNO (una corrección puede sumar o restar) y motivo obligatorio. Ver docs/02-modelo-de-datos.md §1.
+model StockAdjustment {
+  id          String                @id @default(cuid())
+  companyId   String
+  warehouseId String
+  warehouse   Warehouse             @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  status      StockAdjustmentStatus @default(draft)
+  reason      StockAdjustmentReason
+  note        String?
+  userId      String
+
+  lines StockAdjustmentLine[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  confirmedAt DateTime?
+
+  @@index([companyId, status])
+}
+
+model StockAdjustmentLine {
+  id           String          @id @default(cuid())
+  adjustmentId String
+  adjustment   StockAdjustment @relation(fields: [adjustmentId], references: [id], onDelete: Cascade)
+  variantId    String
+  variant      Variant         @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  delta        Decimal         @db.Decimal(18, 4) // con signo: + suma, - resta
+  scannedCode  String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([adjustmentId, variantId])
+  @@index([adjustmentId])
 }

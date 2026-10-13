@@ -482,6 +482,12 @@ Implementado en F0.4 (ver `prisma/schema.prisma`): `Company`, `Branch`, `Warehou
   permisos. Índice único con `NULLS NOT DISTINCT`.
 - **Empresa/sucursal activa**: cookie `udex_branch` con el id de la sucursal; en cada pedido se valida
   contra los accesos reales (`modules/core/scope.ts`).
+- **Ajustes de stock** (F1.6, `/stock/ajustes`): `StockAdjustment` + `StockAdjustmentLine`, mismo
+  patrón borrador→confirmar que `StockReceipt`, pero `delta` con signo y `reason` obligatorio
+  (`modules/inventory/adjustmentReasons.ts`). La pantalla escanea con un toggle suma/resta en vez de
+  dos flujos separados. Confirmar respeta la política de stock negativo del depósito (§1.12).
+- **Kardex** (F1.9, `/productos/[id]/movimientos`): lista `StockMovement` por variante, con etiqueta en
+  español de cada tipo (`modules/inventory/movementTypes.ts`).
 - **Alta de empresa** (F0.14, solo superadmin, `/onboarding`): crea `Company` + `Branch` + `Warehouse`
   por defecto en una transacción, y guarda el rubro elegido en `Setting{scope: companyId, key:
   "industry"}` (catálogo en `modules/core/industries.ts`; todavía no precarga nada, eso es F2.9).

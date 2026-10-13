@@ -45,10 +45,11 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
   > No hace falta todavía: no hay ventas (F3) ni checkout web (F5) reservando stock.
 - [x] F1.5 Carga inicial de stock (movimiento `initial`) desde pantalla, **por escaneo** y CSV.
 - [x] F1.5b **Ingreso de mercadería por escaneo** (`StockReceipt`): depósito, modo "suma 1" / "escanear + cantidad", costo, borrador autoguardado, código desconocido → asociar o crear producto rápido. Ver 08 §6.
-- [ ] F1.6 Ajustes de stock con motivo y permiso.
+- [x] F1.6 Ajustes de stock con motivo y permiso. `/stock/ajustes`, por escaneo con toggle suma/resta, respeta la política de stock negativo del depósito.
 - [ ] F1.7 Transferencias entre depósitos (draft → sent → received).
 - [ ] F1.8 Conteo físico por escaneo (pistola o cámara del celular, varios contadores en paralelo). Ver 08 §8.
-- [ ] F1.9 Pantallas: existencias por depósito, kardex (historial de movimientos) por SKU.
+- [x] F1.9 Kardex (historial de movimientos) por producto, en `/productos/[id]/movimientos`.
+  > Pendiente: pantalla de existencias consolidadas por depósito (hoy el stock por depósito solo se ve dentro de cada producto).
 - [ ] F1.10 `VariantCost`: costo promedio ponderado.
 - [ ] F1.11 `inventory:verify` (recalcular saldos desde el ledger y alertar diferencias).
 - [ ] F1.12 Mínimos/máximos y alerta de faltantes.
