@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { saveLicenseAction, type LicenseFormState } from "./actions";
+import { Button } from "@/components/ui/Button";
 
 type Props = {
   modules: { key: string; label: string; enabled: boolean }[];
@@ -34,7 +35,7 @@ export function LicenseForm({ modules, values }: Props) {
         <legend className="mb-1 text-sm font-medium">Módulos habilitados</legend>
         {modules.map((m) => (
           <label key={m.key} className="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="modules" value={m.key} defaultChecked={m.enabled} className="size-4" />
+            <input type="checkbox" name="modules" value={m.key} defaultChecked={m.enabled} className="size-4 accent-accent" />
             {m.label}
           </label>
         ))}
@@ -52,14 +53,14 @@ export function LicenseForm({ modules, values }: Props) {
       <label className="flex max-w-xs flex-col gap-1 text-sm font-medium">
         Vence
         <input name="expiresAt" type="date" defaultValue={values.expiresAt} className="input" />
-        <span className="text-xs font-normal text-neutral-500">Vacío = no vence. Vencida, el sistema queda en solo lectura.</span>
+        <span className="text-xs font-normal text-muted">Vacío = no vence. Vencida, el sistema queda en solo lectura.</span>
       </label>
 
-      {state.error && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>}
-      {state.saved && <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-800">Licencia guardada.</p>}
-      <button type="submit" disabled={pending} className="btn-primary self-start">
-        {pending ? "Guardando..." : "Guardar"}
-      </button>
+      {state.error && <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">{state.error}</p>}
+      {state.saved && <p role="status" className="rounded-lg bg-ok-soft px-3 py-2 text-sm text-ok">Licencia guardada.</p>}
+      <Button type="submit" loading={pending} className="self-start">
+        Guardar
+      </Button>
     </form>
   );
 }

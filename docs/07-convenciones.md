@@ -17,6 +17,21 @@ Basadas en cómo está hecho corto, con los ajustes que pide un ERP.
 - Validación de entrada con **zod** en todo server action y endpoint.
 - Comentarios: explicar el **por qué** (reglas de negocio, requisitos de ARCA), como en el schema de corto.
 
+## UI
+
+- **Colores solo con tokens** (`bg-surface`, `bg-surface-2`, `border-line`, `text-muted`, `bg-accent`,
+  `text-on-accent`, `bg-ok-soft`/`text-ok`, `warn`, `danger`), definidos en `src/app/globals.css` para
+  claro y oscuro. Nunca `bg-white`, `text-gray-500` ni colores sueltos.
+- **Usar el kit** de `src/components/ui/`: `Button`/`LinkButton`, `Field` + `Input`/`Select`/`Textarea`,
+  `DecimalInput` (importes y cantidades es-AR), `Card`, `PageHeader`, `Badge`, `Alert`, `EmptyState`,
+  `DataTable` + `Pagination`, `SearchBox`/`FilterSelect`, `useToast()` y `useConfirm()`.
+- **Listados**: paginados y filtrados en el servidor con `parseListParams` (estado en la URL). Ver
+  `src/app/(panel)/auditoria/page.tsx` como ejemplo de referencia.
+- Importes y cantidades con la clase `tabular` (números alineados) y alineados a la derecha.
+- Todo tiene que andar en celular (390 px) y en modo oscuro: probarlo antes de dar una pantalla por hecha.
+- Menú: agregar la sección en `src/modules/core/menu.ts` con su permiso/módulo y `ready: true` cuando
+  esté construida.
+
 ## Plata y cantidades
 
 - `Decimal` de Prisma (`decimal.js`) siempre. **Nunca `Float`** (corto usa Float; en el ERP no se admite).

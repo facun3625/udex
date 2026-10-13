@@ -1,11 +1,81 @@
 @import "tailwindcss";
 
-/* Piezas base mientras no esté el kit de componentes (F0.8). */
+/* Modo oscuro por clase en <html> (la pone el layout según la cookie udex_theme; "system" la resuelve un
+   script antes de pintar). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tokens de color del sistema. Las pantallas usan estos nombres (bg-surface, text-muted, border-line...)
+   y nunca colores sueltos, para que claro/oscuro y un futuro cambio de marca se hagan en un solo lugar. */
+:root {
+  --c-bg: #f6f6f4;
+  --c-surface: #ffffff;
+  --c-surface-2: #f1f1ef;
+  --c-line: #e3e3df;
+  --c-text: #1c1c1a;
+  --c-muted: #6b6b66;
+  --c-accent: #1f5f5b; /* verde petróleo: acciones principales */
+  --c-accent-hover: #184b48;
+  --c-accent-soft: #e3efee;
+  --c-on-accent: #ffffff;
+  --c-danger: #b42318;
+  --c-danger-soft: #fdecea;
+  --c-warn: #8a5a00;
+  --c-warn-soft: #fff4dc;
+  --c-ok: #1d6b35;
+  --c-ok-soft: #e6f4ea;
+}
+
+.dark {
+  --c-bg: #121211;
+  --c-surface: #1b1b1a;
+  --c-surface-2: #242422;
+  --c-line: #33332f;
+  --c-text: #ececea;
+  --c-muted: #a0a09a;
+  --c-accent: #5fb3ad;
+  --c-accent-hover: #79c4be;
+  --c-accent-soft: #1e3432;
+  --c-on-accent: #0d1f1e;
+  --c-danger: #f08a80;
+  --c-danger-soft: #3a1d1a;
+  --c-warn: #f0c060;
+  --c-warn-soft: #33290f;
+  --c-ok: #7fd197;
+  --c-ok-soft: #17301f;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-line: var(--c-line);
+  --color-text: var(--c-text);
+  --color-muted: var(--c-muted);
+  --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-on-accent: var(--c-on-accent);
+  --color-danger: var(--c-danger);
+  --color-danger-soft: var(--c-danger-soft);
+  --color-warn: var(--c-warn);
+  --color-warn-soft: var(--c-warn-soft);
+  --color-ok: var(--c-ok);
+  --color-ok-soft: var(--c-ok-soft);
+}
+
+body {
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+
+/* Números tabulares en todo el sistema: importes y cantidades alineados en tablas y en la caja. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
 @layer components {
   .input {
-    @apply rounded-lg border border-neutral-300 bg-white px-3 py-2 text-base font-normal outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/10;
-  }
-  .btn-primary {
-    @apply rounded-lg bg-neutral-900 px-4 py-2.5 font-medium text-white hover:bg-neutral-800 disabled:opacity-60;
+    @apply w-full rounded-lg border border-line bg-surface px-3 py-2 text-base font-normal text-text outline-none placeholder:text-muted focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:opacity-60;
   }
 }

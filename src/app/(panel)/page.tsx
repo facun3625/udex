@@ -1,25 +1,24 @@
 import { requireContext } from "@/modules/core/context";
 import { daysUntilExpiry } from "@/modules/core/modules";
+import { Alert, Card, PageHeader } from "@/components/ui/Card";
 
 export default async function HomePage() {
   const ctx = await requireContext();
   const days = daysUntilExpiry(ctx.license);
 
   return (
-    <div className="flex max-w-2xl flex-col gap-4">
-      <h1 className="text-2xl font-semibold">Hola, {ctx.user.name.split(" ")[0]}</h1>
+    <div className="flex max-w-3xl flex-col gap-4">
+      <PageHeader title={`Hola, ${ctx.user.name.split(" ")[0]}`} description="Resumen del día" />
       {ctx.user.isSuperadmin && !ctx.license.configured && (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <Alert>
           Esta instalación no tiene licencia configurada: están habilitados todos los módulos.{" "}
-          <a href="/superadmin/licencia" className="underline">Configurar licencia</a>
-        </p>
+          <a href="/superadmin/licencia" className="font-medium underline">Configurar licencia</a>
+        </Alert>
       )}
-      {days !== null && days > 0 && days <= 15 && (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          La licencia vence en {days} {days === 1 ? "día" : "días"}.
-        </p>
-      )}
-      <p className="text-neutral-600">El sistema está en construcción. Próximo: stock con código de barras.</p>
+      {days !== null && days > 0 && days <= 15 && <Alert>La licencia vence en {days} {days === 1 ? "día" : "días"}.</Alert>}
+      <Card className="p-6 text-sm text-muted">
+        Acá van a aparecer las ventas del día, el stock bajo y los pendientes. Próximo paso: stock con código de barras.
+      </Card>
     </div>
   );
 }

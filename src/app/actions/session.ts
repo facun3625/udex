@@ -4,9 +4,7 @@ import { AuthError } from "next-auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { signIn, signOut } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { getSessionUser, SCOPE_COOKIE } from "@/modules/core/context";
-import { accessibleBranches } from "@/modules/core/scope";
+import { getAccess, getSessionUser, SCOPE_COOKIE } from "@/modules/core/context";
 
 export type LoginState = { error?: string };
 
@@ -41,21 +39,7 @@ export async function selectBranchAction(form: FormData) {
   if (!user) redirect("/login");
   const branchId = String(form.get("branchId") ?? "");
 
-  const [memberships, companies, branches] = await Promise.all([
-    prisma.membership.findMany({
-      where: { userId: user.id },
-      select: { companyId: true, branchId: true, role: { select: { permissions: true } } },
-    }),
-    prisma.company.findMany({ select: { id: true, active: true } }),
-    prisma.branch.findMany({ select: { id: true, companyId: true, active: true } }),
-  ]);
-  const access = accessibleBranches({
-    isSuperadmin: user.isSuperadmin,
-    memberships: memberships.map((m) => ({ companyId: m.companyId, branchId: m.branchId, permissions: m.role.permissions })),
-    companies,
-    branches,
-  });
-  if (!access.has(branchId)) redirect("/seleccionar");
+  if (!(await getAccess(user)).has(branchId)) redirect("/seleccionar");
 
   (await cookies()).set(SCOPE_COOKIE, branchId, {
     httpOnly: true,

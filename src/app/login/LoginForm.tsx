@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { loginAction, type LoginState } from "@/app/actions/session";
+import { Button } from "@/components/ui/Button";
 
 export function LoginForm({ next }: { next?: string }) {
   const [state, action, pending] = useActionState<LoginState, FormData>(loginAction, {});
@@ -16,10 +17,10 @@ export function LoginForm({ next }: { next?: string }) {
         Contraseña
         <input name="password" type="password" required autoComplete="current-password" className="input" />
       </label>
-      {state.error && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>}
-      <button type="submit" disabled={pending} className="btn-primary">
-        {pending ? "Ingresando..." : "Ingresar"}
-      </button>
+      {state.error && <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">{state.error}</p>}
+      <Button type="submit" size="lg" loading={pending}>
+        Ingresar
+      </Button>
     </form>
   );
 }

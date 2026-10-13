@@ -12,7 +12,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { type Permission } from "@/modules/core/permissions";
 import { type LicenseState, type ModuleKey, licenseState } from "@/modules/core/modules";
-import { resolveScope, type Scope } from "@/modules/core/scope";
+import { accessibleBranches, resolveScope, type ScopeInput, type Scope } from "@/modules/core/scope";
 
 export const SCOPE_COOKIE = "udex_branch";
 
@@ -51,23 +51,30 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   return { id: user.id, name: user.name, email: user.email, isSuperadmin: user.isSuperadmin };
 });
 
-export const getScope = cache(async (user: SessionUser): Promise<Scope> => {
-  const [memberships, companies, branches, store] = await Promise.all([
+// Datos para calcular a qué sucursales puede entrar (ver modules/core/scope.ts).
+const loadAccessInput = cache(async (user: SessionUser): Promise<Omit<ScopeInput, "requested">> => {
+  const [memberships, companies, branches] = await Promise.all([
     prisma.membership.findMany({
       where: { userId: user.id },
       select: { companyId: true, branchId: true, role: { select: { permissions: true } } },
     }),
     prisma.company.findMany({ select: { id: true, active: true } }),
     prisma.branch.findMany({ select: { id: true, companyId: true, active: true } }),
-    cookies(),
   ]);
-  return resolveScope({
+  return {
     isSuperadmin: user.isSuperadmin,
     memberships: memberships.map((m) => ({ companyId: m.companyId, branchId: m.branchId, permissions: m.role.permissions })),
     companies,
     branches,
-    requested: { branchId: store.get(SCOPE_COOKIE)?.value ?? null },
-  });
+  };
+});
+
+// Sucursales a las que puede entrar → permisos en cada una.
+export const getAccess = cache(async (user: SessionUser) => accessibleBranches(await loadAccessInput(user)));
+
+export const getScope = cache(async (user: SessionUser): Promise<Scope> => {
+  const [input, store] = await Promise.all([loadAccessInput(user), cookies()]);
+  return resolveScope({ ...input, requested: { branchId: store.get(SCOPE_COOKIE)?.value ?? null } });
 });
 
 export const getContext = cache(async (): Promise<Ctx | null> => {

@@ -12,3 +12,5 @@ Una línea por tarea terminada: `AAAA-MM-DD · F<fase>.<n> · descripción · qu
 - 2026-10-13 · F0.5 · Login NextAuth 5 (Credentials, freno de intentos), elección de empresa/sucursal, proxy de rutas · Claude
 - 2026-10-13 · F0.6 · Catálogo de permisos, roles de sistema, `requireContext`/`requirePermission`, superadmin por consola · Claude
 - 2026-10-13 · F0.6b · Licencia y módulos (`requireModule`, `requireWritable`, menú filtrado, pantalla del superadmin) · Claude
+- 2026-10-13 · F0.7 · Panel: menú agrupado con íconos, cajón en celular, empresa/sucursal en el encabezado, modo oscuro, paleta Ctrl+K · Claude
+- 2026-10-13 · F0.8 · Kit UI (tokens de color, Button, Field, DecimalInput, Card, Badge, Alert, DataTable, filtros por URL, toasts, confirmación) + pantalla de Auditoría · Claude

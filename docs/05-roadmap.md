@@ -19,8 +19,9 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
 - [x] F0.6b Licencia y módulos (`InstallationLicense`, `requireModule`, menú según módulos). Ver arquitectura §5b.
   > Pendiente: hacer cumplir `maxCompanies` / `maxBranches` / `maxUsers` al crear empresas, sucursales y usuarios (F0.6c y F0.14).
 - [ ] F0.6c ABM de usuarios (alta, baja, reset de contraseña) y de roles propios; asignar accesos por empresa/sucursal. Superadmin oculto en la lista. Respeta `maxUsers`.
-- [ ] F0.7 Layout del panel (sidebar por módulo, buscador global, modo oscuro).
-- [ ] F0.8 Componentes base: tabla con paginación/filtros server-side, formulario, diálogo de confirmación, toasts.
+- [x] F0.7 Layout del panel (sidebar por módulo, buscador global, modo oscuro).
+  > Pendiente: la paleta Ctrl+K hoy solo navega; sumar búsqueda de productos/clientes/ventas cuando existan.
+- [x] F0.8 Componentes base: tabla con paginación/filtros server-side, formulario, diálogo de confirmación, toasts.
 - [ ] F0.9 `src/lib/r2.ts` (Cloudflare R2, igual que corto) + subida de imágenes con thumbnail (sharp).
 - [ ] F0.10 Cifrado de secretos (`src/lib/crypto.ts`, AES-256-GCM, clave en `.env`).
 - [ ] F0.11 Worker PM2 (`npm run worker`) que procesa `OutboxEvent` con reintentos.

@@ -20,7 +20,7 @@ export default async function LicensePage() {
     <main className="mx-auto max-w-2xl px-4 py-10">
       <Link href="/" className="text-sm underline">← Volver</Link>
       <h1 className="mt-3 text-2xl font-semibold">Licencia de la instalación</h1>
-      <p className="mb-6 text-sm text-neutral-500">
+      <p className="mb-6 text-sm text-muted">
         {row ? "Configurada." : "Sin configurar: hoy están habilitados todos los módulos."} Solo la ve el superadmin.
       </p>
       <LicenseForm
