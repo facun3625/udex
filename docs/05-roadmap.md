@@ -31,8 +31,8 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
 
 - [ ] F1.1 Modelos `Unit`, `UnitConversion`, `Product`, `Variant` y **`Barcode`** mínimos (los necesarios para tener SKU escaneable).
 - [ ] F1.1b `modules/catalog/barcode.ts`: `resolveScan` (EAN-13/8/UPC, verificador, factor de caja, SKU, desconocido) + generador de EAN internos + tests. Ver 08 §3.
-- [ ] F1.1d Pantalla **"Probar lector"** (Configuración → Equipos): escanear un código de prueba y detectar falta de Enter, teclado en otro idioma o caracteres raros, con la solución en pantalla. Ver 08 §1b.
 - [ ] F1.1c Componente `ScanInput` (pistola HID, Enter, multiplicador `6*`, bip ok/error, re-foco, suma en la misma línea). Ver 08 §4.
+- [ ] F1.1d Pantalla **"Probar lector"** (Configuración → Equipos): escanear un código de prueba y detectar falta de Enter, teclado en otro idioma o caracteres raros, con la solución en pantalla. Ver 08 §1b.
 - [ ] F1.2 `StockMovement` + `StockBalance` + `modules/inventory/post.ts` (registrar movimientos en transacción con advisory lock, actualizar saldo). Tests de concurrencia.
 - [ ] F1.3 Política de stock negativo (block/warn/allow) por empresa y depósito.
 - [ ] F1.4 `StockReservation` (crear, consumir, liberar, vencer) + job de vencimiento.
