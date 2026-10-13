@@ -46,8 +46,15 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
 - [x] F1.5 Carga inicial de stock (movimiento `initial`) desde pantalla, **por escaneo** y CSV.
 - [x] F1.5b **Ingreso de mercadería por escaneo** (`StockReceipt`): depósito, modo "suma 1" / "escanear + cantidad", costo, borrador autoguardado, código desconocido → asociar o crear producto rápido. Ver 08 §6.
 - [x] F1.6 Ajustes de stock con motivo y permiso. `/stock/ajustes`, por escaneo con toggle suma/resta, respeta la política de stock negativo del depósito.
-- [ ] F1.7 Transferencias entre depósitos (draft → sent → received).
-- [ ] F1.8 Conteo físico por escaneo (pistola o cámara del celular, varios contadores en paralelo). Ver 08 §8.
+- [x] F1.7 Transferencias entre depósitos (draft → sent → received), `/stock/transferencias`. Enviar
+  descuenta del origen al toque (respeta su política de negativo); recibir deja editar la cantidad que
+  de verdad llegó por línea y marca la diferencia contra lo enviado.
+- [x] F1.8 Conteo físico, `/stock/conteos`. Cada escaneo es un UPDATE atómico (`upsert` con `increment`),
+  probado con 40 escrituras realmente concurrentes sin perder ninguna (tests/e2e/stock-count-concurrency.e2e.ts)
+  y con dos sesiones de navegador escaneando el mismo conteo a la vez. Muestra teórico/contado/diferencia
+  en vivo; al cerrar solo ajusta lo que se escaneó (lo no contado no se toca — conteo parcial seguro por
+  defecto).
+  > Pendiente: un modo "conteo total" explícito que sí asuma 0 en lo no escaneado, y conteo por categoría.
 - [x] F1.9 Kardex (historial de movimientos) por producto, en `/productos/[id]/movimientos`.
   > Pendiente: pantalla de existencias consolidadas por depósito (hoy el stock por depósito solo se ve dentro de cada producto).
 - [ ] F1.10 `VariantCost`: costo promedio ponderado.

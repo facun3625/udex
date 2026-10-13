@@ -87,6 +87,9 @@ model Warehouse {
   stockBalances    StockBalance[]
   stockReceipts    StockReceipt[]
   stockAdjustments StockAdjustment[]
+  stockCounts      StockCount[]
+  transfersFrom    StockTransfer[]   @relation("TransferFrom")
+  transfersTo      StockTransfer[]   @relation("TransferTo")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -94,6 +97,95 @@ model Warehouse {
   @@unique([companyId, name])
   @@index([companyId])
   @@index([branchId])
+}
+
+enum StockTransferStatus {
+  draft // se está armando, todavía no salió nada del depósito de origen
+  sent // se descontó del origen; viaja
+  received // se sumó al destino (puede ser distinto a lo enviado, ver receivedQuantity)
+  cancelled
+}
+
+// Traslado de mercadería entre dos depósitos de la misma empresa. "Enviar" descuenta del origen; "Recibir"
+// suma al destino con la cantidad que de verdad llegó (puede diferir de lo enviado). Ver docs/02 §1.9.
+model StockTransfer {
+  id               String              @id @default(cuid())
+  companyId        String
+  fromWarehouseId  String
+  fromWarehouse    Warehouse           @relation("TransferFrom", fields: [fromWarehouseId], references: [id], onDelete: Restrict)
+  toWarehouseId    String
+  toWarehouse      Warehouse           @relation("TransferTo", fields: [toWarehouseId], references: [id], onDelete: Restrict)
+  status           StockTransferStatus @default(draft)
+  note             String?
+  userId           String // quien arma/envía
+  receivedByUserId String?
+
+  lines StockTransferLine[]
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  sentAt     DateTime?
+  receivedAt DateTime?
+
+  @@index([companyId, status])
+}
+
+model StockTransferLine {
+  id               String        @id @default(cuid())
+  transferId       String
+  transfer         StockTransfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
+  variantId        String
+  variant          Variant       @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  quantity         Decimal       @db.Decimal(18, 4) // lo que se mandó
+  receivedQuantity Decimal?      @db.Decimal(18, 4) // lo que de verdad llegó (null hasta recibir)
+  scannedCode      String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([transferId, variantId])
+  @@index([transferId])
+}
+
+enum StockCountStatus {
+  counting // abierto, se puede seguir escaneando (de a uno o varios a la vez)
+  confirmed
+  cancelled
+}
+
+// Conteo físico (F1.8): se escanea lo que hay en el depósito y se compara contra el teórico. Pensado
+// para que cuenten varias personas a la vez (cada escaneo suma con un UPDATE atómico, no hay carrera).
+// Ajusta SOLO lo que se contó — lo no escaneado no se toca (ver docs/02 §1.9 y la pantalla).
+model StockCount {
+  id          String           @id @default(cuid())
+  companyId   String
+  warehouseId String
+  warehouse   Warehouse        @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  status      StockCountStatus @default(counting)
+  userId      String
+
+  lines StockCountLine[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  confirmedAt DateTime?
+
+  @@index([companyId, status])
+}
+
+model StockCountLine {
+  id          String     @id @default(cuid())
+  countId     String
+  count       StockCount @relation(fields: [countId], references: [id], onDelete: Cascade)
+  variantId   String
+  variant     Variant    @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  countedQty  Decimal    @default(0) @db.Decimal(18, 4)
+  scannedCode String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([countId, variantId])
+  @@index([countId])
 }
 
 model User {
@@ -331,6 +423,8 @@ model Variant {
   stockBalances        StockBalance[]
   stockReceiptLines    StockReceiptLine[]
   stockAdjustmentLines StockAdjustmentLine[]
+  stockTransferLines   StockTransferLine[]
+  stockCountLines      StockCountLine[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

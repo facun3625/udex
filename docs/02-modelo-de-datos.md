@@ -486,6 +486,13 @@ Implementado en F0.4 (ver `prisma/schema.prisma`): `Company`, `Branch`, `Warehou
   patrón borrador→confirmar que `StockReceipt`, pero `delta` con signo y `reason` obligatorio
   (`modules/inventory/adjustmentReasons.ts`). La pantalla escanea con un toggle suma/resta en vez de
   dos flujos separados. Confirmar respeta la política de stock negativo del depósito (§1.12).
+- **Transferencias** (F1.7, `/stock/transferencias`): `StockTransfer` + `StockTransferLine`, estados
+  draft→sent→received. `receivedQuantity` por línea (nullable hasta recibir) para que la cantidad que
+  llega pueda diferir de la enviada sin perder el rastro de la diferencia.
+- **Conteos** (F1.8, `/stock/conteos`): `StockCount` + `StockCountLine`. El incremento por escaneo usa
+  `upsert` con `{ increment }` de Prisma (UPDATE atómico de Postgres), no `pg_advisory_xact_lock` como
+  `postStockMovements` — no hace falta: no hay una lectura previa que una segunda escritura pueda pisar.
+  Verificado con una prueba e2e de 40 escrituras concurrentes reales (no simuladas con un navegador).
 - **Kardex** (F1.9, `/productos/[id]/movimientos`): lista `StockMovement` por variante, con etiqueta en
   español de cada tipo (`modules/inventory/movementTypes.ts`).
 - **Alta de empresa** (F0.14, solo superadmin, `/onboarding`): crea `Company` + `Branch` + `Warehouse`

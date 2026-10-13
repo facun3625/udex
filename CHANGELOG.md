@@ -28,6 +28,12 @@ Una línea por tarea terminada: `AAAA-MM-DD · F<fase>.<n> · descripción · qu
   (/productos/[id]/movimientos). Probado con navegador: ajuste positivo y negativo sobre dos
   productos, bloqueo correcto al intentar restar más stock del disponible (el ajuste queda en
   borrador, sin movimiento creado) · Claude
+- 2026-10-13 · F1.7 y F1.8 · Transferencias entre depósitos (enviar descuenta el origen, recibir con
+  cantidad editable por línea y aviso de diferencia) y conteos físicos (incremento atómico por escaneo,
+  pensado para varios contadores a la vez, solo ajusta lo escaneado). Verificado con un e2e de 40
+  escrituras concurrentes reales y con dos sesiones de navegador contando el mismo producto a la vez
+  (4+3=7 exacto). Con esto F1 (stock con código de barras) queda completo salvo el costo promedio
+  ponderado (F1.10) · Claude
 - 2026-10-13 · F2.3b · Primer corte de Productos: Category (árbol), precio plano en Variant (D-16),
   listado /productos, alta manual /productos/nuevo, edición completa /productos/[id] (categoría con
   alta rápida en diálogo, precio, SKU, códigos de barras). Corregidos dos bugs reales encontrados
