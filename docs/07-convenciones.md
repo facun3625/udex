@@ -19,6 +19,13 @@ Basadas en cómo está hecho corto, con los ajustes que pide un ERP.
 
 ## UI
 
+- **Canvas blanco**: el fondo de página y el de las tarjetas es el mismo blanco (`bg`/`surface`); se
+  diferencian con un borde fino (`border-line`) y una sombra muy sutil (ver `Card`), no con un gris de
+  fondo. `surface-2` queda para estados de hover/activo y para el fondo tenue de las pantallas sueltas
+  (login, seleccionar sucursal, onboarding) detrás de su tarjeta — nunca como fondo de todo el panel.
+- **Ancho**: el panel centra el contenido hasta 1400px (`PanelShell`), así que las páginas no deberían
+  ponerse su propio `max-w-*` salvo que sea un formulario angosto a propósito (login, una tarjeta de
+  alta). Las pantallas de listado (tablas, grillas de accesos) usan todo ese ancho.
 - **Colores solo con tokens** (`bg-surface`, `bg-surface-2`, `border-line`, `text-muted`, `bg-accent`,
   `text-on-accent`, `bg-ok-soft`/`text-ok`, `warn`, `danger`), definidos en `src/app/globals.css` para
   claro y oscuro. Nunca `bg-white`, `text-gray-500` ni colores sueltos.

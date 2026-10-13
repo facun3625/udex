@@ -16,9 +16,9 @@ export default async function ConfigHubPage() {
   ].filter((c) => c.visible);
 
   return (
-    <div className="max-w-3xl">
+    <div>
       <PageHeader title="Configuración" />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {cards.map((c) => (
           <Link key={c.href} href={c.href} className="flex items-start gap-3 rounded-xl border border-line bg-surface p-5 hover:border-accent">
             <c.icon className="size-5 shrink-0 text-accent" />

@@ -1,7 +1,7 @@
 import { cx } from "./cx";
 
 export function Card({ className, ...rest }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cx("rounded-xl border border-line bg-surface", className)} {...rest} />;
+  return <div className={cx("rounded-xl border border-line bg-surface shadow-[0_1px_2px_rgba(16,16,12,0.04)]", className)} {...rest} />;
 }
 
 export function PageHeader({ title, description, actions }: { title: string; description?: string; actions?: React.ReactNode }) {

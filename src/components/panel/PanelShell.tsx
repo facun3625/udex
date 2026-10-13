@@ -239,7 +239,9 @@ export function PanelShell({ menu, companyName, branchName, canSwitch, user, the
           </header>
 
           {banner}
-          <main className="flex-1 px-4 py-6 md:px-8">{children}</main>
+          <main className="flex-1 px-4 py-6 md:px-8">
+            <div className="mx-auto w-full max-w-[1400px]">{children}</div>
+          </main>
         </div>
       </div>
       <CommandPalette menu={menu} open={palette} onClose={() => setPalette(false)} />

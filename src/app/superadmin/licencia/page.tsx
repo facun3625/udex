@@ -17,7 +17,7 @@ export default async function LicensePage() {
   const enabled = new Set(row ? row.modules : ALL_MODULES);
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10">
+    <main className="mx-auto min-h-screen max-w-2xl bg-surface-2 px-4 py-10">
       <Link href="/" className="text-sm underline">← Volver</Link>
       <h1 className="mt-3 text-2xl font-semibold">Licencia de la instalación</h1>
       <p className="mb-6 text-sm text-muted">

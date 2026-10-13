@@ -24,7 +24,7 @@ export default async function SelectBranchPage() {
     .filter((g) => g.branches.length > 0);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center gap-6 px-4 py-10">
+    <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center gap-6 bg-surface-2 px-4 py-10">
       <div>
         <h1 className="text-2xl font-semibold">¿Dónde vas a trabajar?</h1>
         <p className="text-sm text-muted">{user.name} · {user.email}</p>

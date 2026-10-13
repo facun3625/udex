@@ -7,10 +7,10 @@
 /* Tokens de color del sistema. Las pantallas usan estos nombres (bg-surface, text-muted, border-line...)
    y nunca colores sueltos, para que claro/oscuro y un futuro cambio de marca se hagan en un solo lugar. */
 :root {
-  --c-bg: #f6f6f4;
+  --c-bg: #ffffff;
   --c-surface: #ffffff;
-  --c-surface-2: #f1f1ef;
-  --c-line: #e3e3df;
+  --c-surface-2: #f6f6f4;
+  --c-line: #e7e7e3;
   --c-text: #1c1c1a;
   --c-muted: #6b6b66;
   --c-accent: #1f5f5b; /* verde petróleo: acciones principales */

@@ -12,7 +12,7 @@ export function NewUserForm({ roles, branches, allowBranchChoice }: { roles: { i
 
   if (state.saved && state.generatedPassword) {
     return (
-      <Card className="flex flex-col gap-4 p-5">
+      <Card className="flex max-w-2xl flex-col gap-4 p-5">
         <p className="font-medium">Usuario creado.</p>
         <GeneratedPassword password={state.generatedPassword} label="Contraseña temporal" />
         <Button variant="secondary" onClick={() => location.reload()}>Crear otro usuario</Button>
@@ -21,7 +21,7 @@ export function NewUserForm({ roles, branches, allowBranchChoice }: { roles: { i
   }
 
   return (
-    <Card className="p-5">
+    <Card className="max-w-2xl p-5">
       <h2 className="mb-4 font-medium">Nuevo usuario</h2>
       <form action={action} className="flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">

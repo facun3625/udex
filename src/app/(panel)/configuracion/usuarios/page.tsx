@@ -89,7 +89,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
   ];
 
   return (
-    <div className="flex max-w-4xl flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <PageHeader title="Usuarios" description="Quién puede entrar al panel y qué puede hacer." />
       <NewUserForm roles={roles.map((r) => ({ id: r.id, name: r.name }))} branches={branches} allowBranchChoice={branchLimit(ctx.license) !== 1} />
       <Card>

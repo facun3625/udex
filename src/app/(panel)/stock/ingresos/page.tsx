@@ -33,7 +33,7 @@ export default async function ReceiptsListPage() {
   ];
 
   return (
-    <div className="flex max-w-4xl flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <PageHeader
         title="Ingresos de mercadería"
         description="Escaneá cada producto a medida que llega: el stock sube al confirmar."

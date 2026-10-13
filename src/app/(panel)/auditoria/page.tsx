@@ -50,7 +50,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
   ];
 
   return (
-    <div className="max-w-5xl">
+    <div>
       <PageHeader title="Auditoría" description="Quién hizo qué y cuándo: precios, ajustes de stock, anulaciones, usuarios y configuración." />
       <Card>
         <div className="flex flex-wrap gap-2 border-b border-line p-3">
