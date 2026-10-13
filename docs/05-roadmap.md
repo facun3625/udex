@@ -13,10 +13,12 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
 - [x] F0.1 Crear proyecto Next 16 + TS + Tailwind 4 + ESLint (mismas versiones que corto). `git init`, repo en GitHub.
 - [x] F0.2 Prisma 7 + Postgres (docker-compose para desarrollo), `src/lib/prisma.ts` como corto.
 - [x] F0.3 `src/lib/money.ts`: helpers de `Decimal` (sumar, redondear 2 dec, formatear ARS/USD) + tests.
-- [ ] F0.4 Modelos core: `Company`, `Branch`, `Warehouse`, `User`, `Role`, `Permission`, `UserBranchRole`, `AuditLog`, `Sequence`, `Setting`, `OutboxEvent`.
-- [ ] F0.5 NextAuth 5 (Credentials), login, selector de empresa/sucursal en la sesión.
-- [ ] F0.6 Permisos: helper `requirePermission(ctx, "x.y")` + roles semilla. Superadmin con todo, invisible en la lista de usuarios.
-- [ ] F0.6b Licencia y módulos (`InstallationLicense`, `requireModule`, menú según módulos). Ver arquitectura §5b.
+- [x] F0.4 Modelos core: `Company`, `Branch`, `Warehouse`, `User`, `Role`, `Permission`, `UserBranchRole`, `AuditLog`, `Sequence`, `Setting`, `OutboxEvent`.
+- [x] F0.5 NextAuth 5 (Credentials), login, selector de empresa/sucursal en la sesión.
+- [x] F0.6 Permisos: helper `requirePermission(ctx, "x.y")` + roles semilla. Superadmin con todo, invisible en la lista de usuarios.
+- [x] F0.6b Licencia y módulos (`InstallationLicense`, `requireModule`, menú según módulos). Ver arquitectura §5b.
+  > Pendiente: hacer cumplir `maxCompanies` / `maxBranches` / `maxUsers` al crear empresas, sucursales y usuarios (F0.6c y F0.14).
+- [ ] F0.6c ABM de usuarios (alta, baja, reset de contraseña) y de roles propios; asignar accesos por empresa/sucursal. Superadmin oculto en la lista. Respeta `maxUsers`.
 - [ ] F0.7 Layout del panel (sidebar por módulo, buscador global, modo oscuro).
 - [ ] F0.8 Componentes base: tabla con paginación/filtros server-side, formulario, diálogo de confirmación, toasts.
 - [ ] F0.9 `src/lib/r2.ts` (Cloudflare R2, igual que corto) + subida de imágenes con thumbnail (sharp).

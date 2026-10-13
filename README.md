@@ -18,6 +18,9 @@ Cloudflare R2 · deploy en VPS (PM2 + Nginx + Postgres en Docker).
 cp .env.example .env     # en desarrollo ya apunta al Postgres de docker-compose
 npm install
 npm run db:up            # Postgres 16 en localhost:5460
+npm run db:migrate       # aplica migraciones y regenera el cliente de Prisma
+npm run db:seed:dev      # empresa demo + usuarios duenio@demo.local / cajero@demo.local (clave: udex-demo-1234)
+npm run superadmin -- soporte@udex.local "Soporte"   # crea el superadmin (muestra la clave generada)
 npm run dev              # http://localhost:3000 · salud: /api/health
 npm test                 # tests de unidad (node --test)
 ```

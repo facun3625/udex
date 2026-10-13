@@ -7,4 +7,211 @@ datasource db {
   provider = "postgresql"
 }
 
-// Los modelos se agregan por módulo siguiendo docs/02-modelo-de-datos.md (core en F0.4).
+// Los modelos siguen docs/02-modelo-de-datos.md. Secciones por módulo; toda tabla de negocio lleva companyId.
+
+// =====================================================================================================
+// CORE — empresas, sucursales, depósitos, usuarios, permisos, licencia, auditoría
+// =====================================================================================================
+
+enum IvaCondition {
+  responsable_inscripto
+  monotributo
+  exento
+}
+
+// Razón social / CUIT. Una instalación (un cliente) puede tener varias: es común que el mismo dueño
+// facture con más de un CUIT. Stock, precios por lista y comprobantes son siempre por empresa.
+model Company {
+  id           String       @id @default(cuid())
+  legalName    String // razón social, tal cual figura en ARCA
+  tradeName    String? // nombre de fantasía
+  cuit         String       @unique // 11 dígitos, sin guiones
+  ivaCondition IvaCondition
+  iibbNumber   String? // ingresos brutos (se imprime en los comprobantes)
+  activityStartDate DateTime? // inicio de actividades (también obligatorio en el comprobante)
+  address      String?
+  active       Boolean      @default(true)
+
+  branches    Branch[]
+  warehouses  Warehouse[]
+  memberships Membership[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Branch {
+  id        String  @id @default(cuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  name      String
+  address   String?
+  active    Boolean @default(true)
+
+  warehouses  Warehouse[]
+  memberships Membership[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, name])
+  @@index([companyId])
+}
+
+enum WarehouseKind {
+  physical // local, galpón
+  logical // "En tránsito", "Fallados", "Consignación"
+}
+
+model Warehouse {
+  id        String        @id @default(cuid())
+  companyId String
+  company   Company       @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  branchId  String?
+  branch    Branch?       @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  name      String
+  kind      WarehouseKind @default(physical)
+  // El depósito desde el que vende y recibe la sucursal si no se elige otro. Uno por sucursal (se valida
+  // en modules/core al guardar: Postgres no permite un unique parcial desde Prisma).
+  isBranchDefault Boolean @default(false)
+  active    Boolean       @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@index([branchId])
+}
+
+model User {
+  id           String  @id @default(cuid())
+  name         String
+  email        String  @unique // siempre en minúsculas
+  passwordHash String
+  // Desarrollador / soporte: todos los permisos en todas las empresas, edita la licencia, y no aparece
+  // en la lista de usuarios del cliente. Se crea solo por consola (scripts/create-superadmin.ts).
+  isSuperadmin Boolean @default(false)
+  active       Boolean @default(true)
+  lastLoginAt  DateTime?
+
+  memberships Membership[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Rol = conjunto de permisos (claves de src/modules/core/permissions.ts). Los roles de sistema se crean
+// solos (seed) y no se pueden borrar; el cliente puede crear los suyos.
+model Role {
+  id          String   @id @default(cuid())
+  key         String   @unique // "owner", "cashier"... o un slug para roles propios
+  name        String
+  description String?
+  permissions String[] @default([])
+  isSystem    Boolean  @default(false)
+
+  memberships Membership[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Qué puede hacer un usuario en una empresa. branchId null = en todas las sucursales de la empresa;
+// con branchId, solo en esa (un cajero de una sucursal). Puede tener varias filas por empresa.
+model Membership {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branchId  String?
+  branch    Branch? @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  roleId    String
+  role      Role    @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, companyId, branchId])
+  @@index([companyId])
+}
+
+// Licencia de la instalación: una sola fila (id = "installation"). La edita solo el superadmin.
+// Sin fila = instalación sin licencia configurada: se habilita todo y el panel del superadmin lo avisa.
+model InstallationLicense {
+  id           String    @id @default("installation")
+  clientName   String
+  plan         String // nombre comercial del plan, solo informativo
+  modules      String[]  @default([]) // claves de src/modules/core/modules.ts
+  maxCompanies Int?
+  maxBranches  Int?
+  maxUsers     Int?
+  // Vencida: el sistema pasa a solo lectura (nunca se bloquea ver datos ni comprobantes emitidos).
+  expiresAt    DateTime?
+  updatedAt    DateTime  @updatedAt
+}
+
+// Auditoría de acciones sensibles (precios, ajustes de stock, anulaciones, emisión fiscal, usuarios,
+// configuración). before/after: el estado relevante antes y después, para poder reconstruir el cambio.
+model AuditLog {
+  id         String   @id @default(cuid())
+  companyId  String?
+  userId     String?
+  userEmail  String
+  action     String // código, ej. "user.create", "stock.adjust"
+  targetType String?
+  targetId   String?
+  summary    String? // texto legible para la lista
+  before     Json?
+  after      Json?
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([companyId, createdAt])
+  @@index([targetType, targetId])
+}
+
+// Numeradores internos (nº de remito, presupuesto, ingreso...). Se incrementan con UPDATE ... RETURNING
+// dentro de la transacción del documento: no hay huecos por rollback ni números repetidos.
+// La numeración fiscal NO sale de acá: la manda ARCA (ver docs/03-facturacion-arca.md).
+model Sequence {
+  companyId String
+  key       String // ej. "stock_receipt", "quote:0001"
+  value     Int    @default(0)
+
+  @@id([companyId, key])
+}
+
+// Configuración clave/valor. scope = "global" o el id de una empresa.
+model Setting {
+  scope     String
+  key       String
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@id([scope, key])
+}
+
+enum OutboxStatus {
+  pending
+  processing
+  done
+  failed
+}
+
+// Eventos para afuera (webhooks a la tienda, mails, reintentos ARCA). Se escriben en la misma
+// transacción que el cambio que los origina y los despacha el worker (F0.11) con reintentos.
+model OutboxEvent {
+  id            String       @id @default(cuid())
+  companyId     String?
+  type          String // ej. "stock.changed"
+  payload       Json
+  status        OutboxStatus @default(pending)
+  attempts      Int          @default(0)
+  nextAttemptAt DateTime     @default(now())
+  lastError     String?
+  createdAt     DateTime     @default(now())
+  processedAt   DateTime?
+
+  @@index([status, nextAttemptAt])
+}

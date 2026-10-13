@@ -437,5 +437,14 @@ Reglas:
 
 ## 7. Core
 
-`Company`, `Branch`, `User`, `Role`, `Permission`, `UserBranchRole`, `AuditLog`, `Sequence` (numeradores
-con lock), `OutboxEvent`, `Setting`, `ApiKey` (para canales).
+Implementado en F0.4 (ver `prisma/schema.prisma`): `Company`, `Branch`, `Warehouse`, `User`, `Role`,
+`Membership`, `InstallationLicense`, `AuditLog`, `Sequence`, `Setting`, `OutboxEvent`. Falta `ApiKey`
+(para canales, F5).
+
+- **Permisos**: el catálogo vive en código (`src/modules/core/permissions.ts`), no en una tabla. `Role`
+  guarda una lista de claves; las que ya no existan se ignoran.
+- **Membership** `{ userId, companyId, branchId?, roleId }`: `branchId` null = todas las sucursales de la
+  empresa. Si un usuario tiene acceso general y además uno puntual en una sucursal, en esa se suman los
+  permisos. Índice único con `NULLS NOT DISTINCT`.
+- **Empresa/sucursal activa**: cookie `udex_branch` con el id de la sucursal; en cada pedido se valida
+  contra los accesos reales (`modules/core/scope.ts`).
