@@ -5,6 +5,7 @@ import { requireContext, requirePermission } from "@/modules/core/context";
 import { MOVEMENT_TYPE_LABEL } from "@/modules/inventory/movementTypes";
 import { Card, PageHeader } from "@/components/ui/Card";
 import { DataTable, Pagination, type Column } from "@/components/ui/DataTable";
+import { FilterSelect } from "@/components/ui/ListFilters";
 import { parseListParams, type SearchParams } from "@/lib/listParams";
 
 export const metadata = { title: "Movimientos de stock · Udex" };
@@ -18,9 +19,17 @@ export default async function ProductMovementsPage({ params, searchParams }: { p
   const sp = await searchParams;
   const lp = parseListParams(sp, { perPage: 50 });
 
-  const product = await prisma.product.findUnique({ where: { id }, include: { variants: { where: { isDefault: true }, take: 1 } } });
+  const product = await prisma.product.findUnique({
+    where: { id },
+    include: { variants: { orderBy: { sku: "asc" }, include: { options: { include: { option: { include: { attribute: true } } } } } } },
+  });
   if (!product || product.companyId !== ctx.companyId) notFound();
-  const variant = product.variants[0];
+
+  // Producto con una sola variante: no hace falta elegir, se muestra directo. Con varias, el parámetro
+  // ?variant= elige cuál (por defecto, la primera).
+  const requested = lp.get("variant");
+  const variant = (requested && product.variants.find((v) => v.id === requested)) || product.variants[0];
+  const label = (v: (typeof product.variants)[number]) => (v.options.length > 0 ? v.options.map((o) => o.option.value).join(" · ") : v.sku);
 
   const where = { companyId: ctx.companyId, variantId: variant?.id ?? "__none__" };
   const [rows, total] = variant
@@ -53,6 +62,11 @@ export default async function ProductMovementsPage({ params, searchParams }: { p
         <PageHeader title="Movimientos de stock" description={variant ? `SKU ${variant.sku}` : undefined} />
       </div>
       <Card>
+        {product.variants.length > 1 && (
+          <div className="border-b border-line p-3">
+            <FilterSelect param="variant" label="Variante" options={product.variants.map((v) => ({ value: v.id, label: label(v) }))} />
+          </div>
+        )}
         <DataTable columns={columns} rows={rows} rowKey={(m) => m.id} empty={{ title: "Sin movimientos todavía" }} />
         <Pagination pathname={`/productos/${product.id}/movimientos`} searchParams={sp} page={lp.page} perPage={lp.perPage} total={total} />
       </Card>

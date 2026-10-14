@@ -336,6 +336,20 @@ plantillas y categorías. Solo datos.
 - `Brand` (marca).
 - `Tag` libre.
 
+### 2.2b Lo implementado en F2.1/F2.5 (ver `prisma/schema.prisma`)
+
+`Attribute` + `AttributeOption` (tipos `select` y `color`, con `colorHex` opcional; `text`/`number`/
+`boolean` existen en el enum pero sin opciones — reservados para cuando haya atributos descriptivos,
+F2.2). `ProductAttribute` (D-17: qué ejes usa un producto, sin plantilla todavía). `VariantOptionValue`
+(qué opción de cada eje tiene cada variante — clave compuesta `[variantId, optionId]`).
+
+Lógica: `modules/catalog/attributeTypes.ts`, `modules/catalog/variantGenerator.ts` (`generateCombinations`:
+producto cartesiano de las opciones elegidas por eje, en el orden de los ejes; `splitNewCombinations`:
+no duplica combinaciones que ya tienen variante). Las páginas de producto (`/productos/[id]`) muestran
+el formulario de "Precio" de siempre SOLO si el producto no tiene ejes asignados (sigue siendo un
+producto simple, una variante); si tiene ejes, cada variante generada vive en su propia ficha
+(`/productos/[id]/variantes/[variantId]`, reusa los mismos formularios de precio/SKU/códigos de barras).
+
 ### 2.3b Lo implementado en F2.3b (ver `prisma/schema.prisma`)
 
 `Category` (árbol con `parentId`, sin SEO/imagen/orden todavía — eso es F2.3/F2.9). Precio **plano**

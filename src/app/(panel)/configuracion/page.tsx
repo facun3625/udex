@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, ScanBarcode, ShieldCheck, Users } from "lucide-react";
+import { Building2, ScanBarcode, ShieldCheck, Tags, Users } from "lucide-react";
 import { can, requireContext } from "@/modules/core/context";
 import { PageHeader } from "@/components/ui/Card";
 
@@ -12,6 +12,7 @@ export default async function ConfigHubPage() {
     { href: "/configuracion/empresa", icon: Building2, title: "Empresa y sucursales", description: "Datos fiscales, sucursales y depósitos", visible: can(ctx, "settings.manage") },
     { href: "/configuracion/usuarios", icon: Users, title: "Usuarios", description: "Quién puede entrar y qué puede hacer", visible: can(ctx, "users.manage") },
     { href: "/configuracion/roles", icon: ShieldCheck, title: "Roles y permisos", description: "Roles del sistema y roles propios", visible: can(ctx, "users.manage") },
+    { href: "/configuracion/atributos", icon: Tags, title: "Atributos", description: "Talles, colores y demás ejes de variante", visible: can(ctx, "catalog.edit") },
     { href: "/configuracion/equipos", icon: ScanBarcode, title: "Probar lector", description: "Diagnosticar una pistola de código de barras nueva", visible: true },
   ].filter((c) => c.visible);
 

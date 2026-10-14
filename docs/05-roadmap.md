@@ -71,11 +71,17 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
   > D-16: el precio quedó plano en `Variant.price` (+ `compareAtPrice`/`costPrice`), no el sistema de
   listas de precios de este documento — ver docs/06-decisiones.md. `Brand`/`Tag` y SEO de categoría
   quedan pendientes de F2.3/F2.9.
-- [ ] F2.1 `Attribute`, `AttributeOption` (tipos: text, number, select, multiselect, color, boolean, date).
-- [ ] F2.2 `ProductTemplate` + `TemplateAttribute` (descriptivo / eje de variante).
+- [x] F2.1 `Attribute`, `AttributeOption` (tipos: select, color, text, number, boolean — falta
+  multiselect y date, F2.9 si hace falta). ABM en `/configuracion/atributos`.
+- [ ] F2.2 `ProductTemplate` + `TemplateAttribute` (plantillas por rubro/categoría) y atributos
+  descriptivos (no-eje, ej. "Material"). Hoy (D-17) un atributo asignado a un producto es siempre un eje
+  de variante; se asigna directo por producto, sin plantilla.
 - [ ] F2.3 Completar `Category` (SEO, imagen, orden) + `Brand`, `Tag`.
 - [ ] F2.4 Completar el ABM de producto: tipo, plantilla, atributos, controles (stock/lote/serie), imágenes R2.
-- [ ] F2.5 Generador de variantes por ejes + patrón de SKU.
+- [x] F2.5 Generador de variantes por ejes + patrón de SKU (`modules/catalog/variantGenerator.ts`,
+  puro, con tests: producto cartesiano, SKU sugerido, no duplica combinaciones ya generadas). La
+  variante "huérfana" sin ejes que trae todo producto nuevo se desactiva sola al generar la primera
+  tanda de variantes reales (nunca se borra, por si ya tiene stock o códigos cargados).
 - [ ] F2.6 Gestión de códigos en el ABM (varios por variante, caja con factor, aviso de duplicado) + impresión de etiquetas A4 y rollo. Ver 08 §9.
 - [ ] F2.6b Etiquetas de balanza (`ScaleBarcodeFormat`, peso/precio variable). Ver 08 §5.
 - [ ] F2.7 Listas de precios (reemplaza el precio plano de D-16: base, derivadas por %, redondeo, escalas por cantidad) + actualización masiva.

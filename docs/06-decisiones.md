@@ -56,6 +56,13 @@ desde ya; el sistema de listas (varias monedas, mayorista/minorista, escalas) es
 no hay nada que lo necesite. F2.7 lo reemplaza sin tocar lo que ya existe (se migra el valor plano a la
 lista "Minorista" por defecto).
 
+**D-17 · Sin plantillas de producto todavía: los atributos se asignan directo** — Aceptada
+(2026-10-14, implementada en F2.1/F2.5) — Un atributo marcado en un producto es siempre un eje de
+variante (no hay todavía atributos solo descriptivos como "Material" sin generar variantes, ni
+plantillas por rubro/categoría que los precarguen). — Dejaba resuelto lo que se pidió (talle/color) sin
+el trabajo extra de `ProductTemplate`; F2.2 lo suma después sin romper lo ya cargado: un atributo
+existente simplemente pasa a poder marcarse como "descriptivo" en vez de forzar que sea un eje.
+
 ## Pendientes (preguntar a la persona)
 
 **D-07 · Generación de PDF** — `@react-pdf/renderer` (liviano, sin navegador) vs HTML→PDF con Playwright

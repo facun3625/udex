@@ -34,6 +34,14 @@ Una línea por tarea terminada: `AAAA-MM-DD · F<fase>.<n> · descripción · qu
   escrituras concurrentes reales y con dos sesiones de navegador contando el mismo producto a la vez
   (4+3=7 exacto). Con esto F1 (stock con código de barras) queda completo salvo el costo promedio
   ponderado (F1.10) · Claude
+- 2026-10-14 · F2.1 y F2.5 · Atributos y variantes: Attribute/AttributeOption (select y color, con
+  swatch), asignación de ejes por producto (D-17: sin plantillas todavía), generador de variantes
+  (producto cartesiano + SKU sugerido + no duplica lo ya generado), ficha propia por variante
+  (precio/SKU/códigos de barra), listado de productos corregido para mostrar rango de precio y cantidad
+  de variantes en vez de buscar una variante "default" que un producto variable no tiene. Probado de
+  punta a punta: Talle×Color generó 4 variantes, una variante editada individualmente (precio + código
+  de barras), y un ingreso de mercadería escaneando el código de esa variante encontró exactamente esa
+  combinación entre las demás del mismo producto · Claude
 - 2026-10-14 · Marca · Logo real (docs/udex.svg) aplicado a toda la app: tipografía Montserrat
   (next/font/google con weight "variable" — la lista de pesos sueltos rompía el build con Turbopack
   en esta versión de Next), azul de marca #017cfa como color de acento (reemplaza el verde petróleo),

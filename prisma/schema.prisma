@@ -392,13 +392,75 @@ model Product {
   trackLots    Boolean @default(false) // F2.11
   trackSerials Boolean @default(false) // F2.11
 
-  variants Variant[]
+  variants   Variant[]
+  attributes ProductAttribute[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([companyId, slug])
   @@index([companyId, status])
+}
+
+enum AttributeType {
+  select // una opción de una lista (ej. Talle)
+  color // una opción con su color (ej. Color)
+  text
+  number
+  boolean
+}
+
+// Atributo definible por la empresa (D-17: por ahora todo atributo cargado en un producto es un eje de
+// variante — "Talle", "Color" — no hay todavía atributos solo descriptivos tipo "Material" sin generar
+// variantes; eso y las plantillas por categoría llegan en F2.2). Ver docs/02-modelo-de-datos.md §2.2.
+model Attribute {
+  id         String        @id @default(cuid())
+  companyId  String
+  name       String
+  code       String
+  type       AttributeType @default(select)
+  filterable Boolean       @default(true)
+  sortOrder  Int           @default(0)
+
+  options  AttributeOption[]
+  products ProductAttribute[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, code])
+  @@index([companyId])
+}
+
+// Valores posibles de un atributo "select"/"color" (ej. Talle: S, M, L — Color: Negro #000, Blanco #fff).
+model AttributeOption {
+  id          String    @id @default(cuid())
+  attributeId String
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  value       String
+  colorHex    String? // solo para type = color
+  sortOrder   Int       @default(0)
+
+  variantValues VariantOptionValue[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([attributeId, value])
+}
+
+// Qué atributos usa un producto y en qué orden se arman sus variantes (Talle × Color, no Color × Talle).
+model ProductAttribute {
+  id          String    @id @default(cuid())
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  attributeId String
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Restrict)
+  sortOrder   Int       @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@unique([productId, attributeId])
+  @@index([productId])
 }
 
 model Variant {
@@ -418,6 +480,7 @@ model Variant {
   compareAtPrice Decimal? @db.Decimal(18, 4) // precio de lista tachado, para mostrar un descuento
   costPrice      Decimal? @db.Decimal(18, 4) // costo manual; F1.10 lo reemplaza por el costo promedio
 
+  options              VariantOptionValue[]
   barcodes             Barcode[]
   stockMovements       StockMovement[]
   stockBalances        StockBalance[]
@@ -431,6 +494,18 @@ model Variant {
 
   @@unique([companyId, sku])
   @@index([productId])
+}
+
+// Qué opción de cada eje le toca a esta variante (Talle=M, Color=Negro). No guarda un companyId propio:
+// se llega a la empresa siempre vía variant/option.
+model VariantOptionValue {
+  variantId String
+  variant   Variant         @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  optionId  String
+  option    AttributeOption @relation(fields: [optionId], references: [id], onDelete: Restrict)
+
+  @@id([variantId, optionId])
+  @@index([optionId])
 }
 
 enum BarcodeType {

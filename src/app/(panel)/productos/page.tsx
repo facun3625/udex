@@ -29,13 +29,21 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const [rows, total] = await Promise.all([
     prisma.product.findMany({
       where,
-      include: { category: true, variants: { where: { isDefault: true }, take: 1 } },
+      // Sin filtrar por isDefault: un producto con variantes generadas (talle/color) no tiene ninguna
+      // marcada isDefault — esa solo existe en los productos simples de una sola variante.
+      include: { category: true, variants: { select: { sku: true, price: true } } },
       orderBy: { updatedAt: "desc" },
       skip: lp.skip,
       take: lp.take,
     }),
     prisma.product.count({ where }),
   ]);
+
+  const priceRange = (prices: number[]) => {
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    return min === max ? formatMoney(min) : `${formatMoney(min)} – ${formatMoney(max)}`;
+  };
 
   const columns: Column<(typeof rows)[number]>[] = [
     {
@@ -44,21 +52,29 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       cell: (p) => (
         <Link href={`/productos/${p.id}`} className="hover:underline">
           <p className="font-medium">{p.name}</p>
-          <p className="text-xs text-muted">{p.variants[0]?.sku ?? "—"}</p>
+          <p className="text-xs text-muted">{p.variants.length === 1 ? p.variants[0].sku : `${p.variants.length} variante${p.variants.length === 1 ? "" : "s"}`}</p>
         </Link>
       ),
     },
     { key: "category", header: "Categoría", cell: (p) => p.category?.name ?? <span className="text-muted">Sin categoría</span>, className: "hidden md:table-cell" },
-    { key: "price", header: "Precio", align: "right", cell: (p) => <span className="tabular">{formatMoney(p.variants[0]?.price ?? 0)}</span> },
+    {
+      key: "price",
+      header: "Precio",
+      align: "right",
+      cell: (p) => <span className="tabular">{p.variants.length === 0 ? formatMoney(0) : priceRange(p.variants.map((v) => Number(v.price)))}</span>,
+    },
     {
       key: "status",
       header: "Estado",
-      cell: (p) => (
-        <div className="flex flex-wrap gap-1.5">
-          <Badge tone={STATUS_TONE[p.status]}>{STATUS_LABEL[p.status]}</Badge>
-          {!isProductComplete({ price: p.variants[0]?.price.toString() ?? "0", categoryId: p.categoryId }) && <Badge tone="warn">Falta completar</Badge>}
-        </div>
-      ),
+      cell: (p) => {
+        const hasPrice = p.variants.some((v) => Number(v.price) > 0);
+        return (
+          <div className="flex flex-wrap gap-1.5">
+            <Badge tone={STATUS_TONE[p.status]}>{STATUS_LABEL[p.status]}</Badge>
+            {!isProductComplete({ price: hasPrice ? "1" : "0", categoryId: p.categoryId }) && <Badge tone="warn">Falta completar</Badge>}
+          </div>
+        );
+      },
     },
   ];
 
