@@ -83,6 +83,16 @@ Basadas en cómo está hecho corto, con los ajustes que pide un ERP.
 - E2E contra base descartable `<db>_e2e` (patrón de corto). ARCA solo homologación con `ARCA_E2E=1`.
 - Una tarea del roadmap no está terminada sin sus tests pasando.
 
+- Atributo JSX string vs. expresión: `placeholder="S\nM\nL"` como string JSX plano **no** interpreta
+  `\n` como salto de línea (queda literal "S\nM\nL" en pantalla); para que se interprete hay que
+  pasarlo como expresión JS: `placeholder={"S\nM\nL"}`. Aplica a cualquier atributo con texto
+  multilínea (placeholder, title, etc.), no solo a éste.
+- `.next` es compartido entre `next dev` y `next build`: si corrés un build de producción mientras el
+  dev server está corriendo contra el mismo `.next`, el build lo pisa y el dev server queda con
+  manifests mezclados (error típico: `Cannot find module '../chunks/ssr/[turbopack]_runtime.js'`,
+  páginas en 500). Solución: parar el dev server antes de buildear, o viceversa, y `rm -rf .next`
+  antes de levantar el que vayas a usar.
+
 ## Git
 
 - Rama por tarea: `f1-2-stock-ledger`. Commit/PR con el ID de la tarea: `F1.2: ledger de stock`.

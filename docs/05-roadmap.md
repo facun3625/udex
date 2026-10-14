@@ -75,7 +75,11 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
   multiselect y date, F2.9 si hace falta). ABM completo en `/configuracion/atributos`: crear, editar
   nombre/tipo (con aviso si el atributo ya tiene opciones y el tipo deja de tener lista), eliminar (solo
   si no está asignado a ningún producto ni usado por ninguna variante, con el motivo explicado), agregar
-  opción, editar/renombrar una opción, eliminar una opción (solo si ninguna variante la usa).
+  opción, editar/renombrar una opción, eliminar una opción (solo si ninguna variante la usa). El
+  formulario de alta distingue por tipo: para "color", picker nativo con gotero/hex por opción (sin
+  escribir el código a mano) más una paleta de colores comunes de un clic; para "select" (talles),
+  botones de plantillas de talles estándar argentinos (ropa XS–XXL, calzado adulto/niño, niños por
+  edad, bebés por meses, pantalón por cintura) que cargan las opciones de un clic, editables después.
 - [ ] F2.2 `ProductTemplate` + `TemplateAttribute` (plantillas por rubro/categoría) y atributos
   descriptivos (no-eje, ej. "Material"). Hoy (D-17) un atributo asignado a un producto es siempre un eje
   de variante; se asigna directo por producto, sin plantilla.

@@ -59,3 +59,10 @@ Una línea por tarea terminada: `AAAA-MM-DD · F<fase>.<n> · descripción · qu
   alta rápida en diálogo, precio, SKU, códigos de barras). Corregidos dos bugs reales encontrados
   probando con navegador: un <form> anidado dentro de otro que rompía el alta de categoría, y un
   Decimal de Prisma pasado sin convertir a un componente cliente · Claude
+- 2026-10-14 · F2.1 · Alta de atributos "pro": para tipo color, picker nativo con gotero/hex por
+  opción en vez de escribir el código a mano, más paleta de colores comunes de un clic; para tipo
+  lista, botones de plantillas de talles estándar argentinos (ropa, calzado adulto/niño, niños por
+  edad, bebés, pantalón por cintura) que cargan las opciones de un clic. Bug real encontrado
+  probando con navegador: el placeholder del textarea de opciones se mostraba como el texto literal
+  "S\nM\nL" en vez de tres líneas, por usar `placeholder="..."` (string JSX plano, no interpreta
+  `\n`) en lugar de `placeholder={"..."}` (expresión JS) · Claude
