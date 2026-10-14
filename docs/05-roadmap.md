@@ -72,7 +72,10 @@ reportes → avanzado. (El stock se diseña antes que el catálogo de la tienda 
   listas de precios de este documento — ver docs/06-decisiones.md. `Brand`/`Tag` y SEO de categoría
   quedan pendientes de F2.3/F2.9.
 - [x] F2.1 `Attribute`, `AttributeOption` (tipos: select, color, text, number, boolean — falta
-  multiselect y date, F2.9 si hace falta). ABM en `/configuracion/atributos`.
+  multiselect y date, F2.9 si hace falta). ABM completo en `/configuracion/atributos`: crear, editar
+  nombre/tipo (con aviso si el atributo ya tiene opciones y el tipo deja de tener lista), eliminar (solo
+  si no está asignado a ningún producto ni usado por ninguna variante, con el motivo explicado), agregar
+  opción, editar/renombrar una opción, eliminar una opción (solo si ninguna variante la usa).
 - [ ] F2.2 `ProductTemplate` + `TemplateAttribute` (plantillas por rubro/categoría) y atributos
   descriptivos (no-eje, ej. "Material"). Hoy (D-17) un atributo asignado a un producto es siempre un eje
   de variante; se asigna directo por producto, sin plantilla.

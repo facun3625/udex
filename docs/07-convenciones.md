@@ -37,6 +37,14 @@ Basadas en cómo está hecho corto, con los ajustes que pide un ERP.
 - **Colores solo con tokens** (`bg-surface`, `bg-surface-2`, `border-line`, `text-muted`, `bg-accent`,
   `text-on-accent`, `bg-ok-soft`/`text-ok`, `warn`, `danger`), definidos en `src/app/globals.css` para
   claro y oscuro. Nunca `bg-white`, `text-gray-500` ni colores sueltos.
+- **`useToast()`/`useConfirm()` devuelven una referencia estable** (memoizada en `FeedbackProvider`):
+  si un componente reacciona a un error con `useEffect(() => { if (state.error) toast.error(...) },
+  [state.error, toast])`, con una referencia inestable ese efecto se dispara de nuevo cada vez que
+  aparece CUALQUIER toast en la página (el toast nuevo re-renderiza el provider, que antes creaba un
+  objeto `{ toast, confirm }` distinto en cada render) — y como `state.error` de un server action no se
+  limpia solo, vuelve a mostrar el mismo toast sin parar. Pasó de verdad armando la pantalla de
+  Atributos (14 toasts por un solo clic); quedó arreglado con un `useMemo` en el provider, pero conviene
+  tenerlo presente si se agrega otro contexto con un patrón parecido.
 - **Usar el kit** de `src/components/ui/`: `Button`/`LinkButton`, `Field` + `Input`/`Select`/`Textarea`,
   `DecimalInput` (importes y cantidades es-AR), `Card`, `PageHeader`, `Badge`, `Alert`, `EmptyState`,
   `DataTable` + `Pagination`, `SearchBox`/`FilterSelect`, `useToast()` y `useConfirm()`.

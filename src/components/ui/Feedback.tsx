@@ -3,7 +3,7 @@
 // Avisos (toasts) y diálogo de confirmación, compartidos por todo el panel.
 //   const toast = useToast();      toast.ok("Guardado")      toast.error("No se pudo...")
 //   const confirm = useConfirm();  if (await confirm({ title: "¿Anular la venta?", danger: true })) ...
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { CircleAlert, CircleCheck, Info, X } from "lucide-react";
 import { Button } from "./Button";
 import { cx } from "./cx";
@@ -47,10 +47,13 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
     setPending(null);
   };
 
-  const api: FeedbackApi = {
-    toast: { ok: (m) => push("ok", m), error: (m) => push("error", m), info: (m) => push("info", m) },
-    confirm,
-  };
+  // Memoizado: si este objeto fuera nuevo en cada render (toasts entrando/saliendo cada pocos segundos),
+  // cualquier efecto en otro componente que dependa de `toast` o `confirm` se re-dispararía solo porque
+  // cambió la referencia, no el contenido — ver docs/07-convenciones.md.
+  const api: FeedbackApi = useMemo(
+    () => ({ toast: { ok: (m) => push("ok", m), error: (m) => push("error", m), info: (m) => push("info", m) }, confirm }),
+    [push, confirm],
+  );
 
   return (
     <FeedbackContext.Provider value={api}>

@@ -34,6 +34,14 @@ Una línea por tarea terminada: `AAAA-MM-DD · F<fase>.<n> · descripción · qu
   escrituras concurrentes reales y con dos sesiones de navegador contando el mismo producto a la vez
   (4+3=7 exacto). Con esto F1 (stock con código de barras) queda completo salvo el costo promedio
   ponderado (F1.10) · Claude
+- 2026-10-14 · F2.1 (completo) · ABM de atributos terminado: editar nombre/tipo (con confirmación si
+  se pierden las opciones), editar/renombrar una opción, eliminar atributo y eliminar opción — ambos
+  con el motivo explicado cuando están en uso (asignado a un producto / usado por una variante), en vez
+  de fallar en silencio. Bug real encontrado y corregido: `useToast`/`useConfirm` devolvían un objeto
+  nuevo en cada render de `FeedbackProvider`, así que un efecto que reacciona a un error de un server
+  action con `toast.error(...)` entraba en bucle (cada toast nuevo re-renderizaba el provider → el
+  efecto se disparaba de nuevo → otro toast...): un clic mostró el mismo aviso 14 veces. Se arregló
+  memoizando ese objeto; quedó documentado en docs/07-convenciones.md · Claude
 - 2026-10-14 · F2.1 y F2.5 · Atributos y variantes: Attribute/AttributeOption (select y color, con
   swatch), asignación de ejes por producto (D-17: sin plantillas todavía), generador de variantes
   (producto cartesiano + SKU sugerido + no duplica lo ya generado), ficha propia por variante
