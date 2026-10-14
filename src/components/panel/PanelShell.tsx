@@ -11,6 +11,7 @@ import type { Theme } from "@/lib/theme";
 import { cx } from "@/components/ui/cx";
 import { FeedbackProvider } from "@/components/ui/Feedback";
 import { MENU_ICONS } from "./icons";
+import { Wordmark } from "@/components/brand/Wordmark";
 import { ThemeToggle } from "./ThemeToggle";
 
 type Props = {
@@ -171,8 +172,8 @@ export function PanelShell({ menu, companyName, branchName, canSwitch, user, the
   }, []);
 
   const brand = (
-    <Link href="/" className="flex h-14 items-center gap-2 px-6 text-lg font-semibold tracking-tight">
-      <span className="flex size-7 items-center justify-center rounded-lg bg-accent text-sm text-on-accent">U</span> Udex
+    <Link href="/" className="flex h-14 items-center px-6">
+      <Wordmark className="h-6 w-auto" />
     </Link>
   );
 

@@ -34,6 +34,10 @@ Una línea por tarea terminada: `AAAA-MM-DD · F<fase>.<n> · descripción · qu
   escrituras concurrentes reales y con dos sesiones de navegador contando el mismo producto a la vez
   (4+3=7 exacto). Con esto F1 (stock con código de barras) queda completo salvo el costo promedio
   ponderado (F1.10) · Claude
+- 2026-10-14 · Marca · Logo real (docs/udex.svg) aplicado a toda la app: tipografía Montserrat
+  (next/font/google con weight "variable" — la lista de pesos sueltos rompía el build con Turbopack
+  en esta versión de Next), azul de marca #017cfa como color de acento (reemplaza el verde petróleo),
+  Wordmark/BrandMark recortados del logo original con negro/blanco invertido por tema, favicon nuevo · Claude
 - 2026-10-13 · F2.3b · Primer corte de Productos: Category (árbol), precio plano en Variant (D-16),
   listado /productos, alta manual /productos/nuevo, edición completa /productos/[id] (categoría con
   alta rápida en diálogo, precio, SKU, códigos de barras). Corregidos dos bugs reales encontrados

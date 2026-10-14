@@ -19,6 +19,14 @@ Basadas en cómo está hecho corto, con los ajustes que pide un ERP.
 
 ## UI
 
+- **Marca** (docs/udex.svg, el archivo original): tipografía Montserrat en toda la app
+  (`next/font/google`, ver `src/app/layout.tsx` — pedida con `weight: "variable"`, NUNCA una lista de
+  pesos sueltos como `["400","600"]`: con Turbopack en esta versión de Next eso rompe el build entero
+  con "next/font/google queries have exactly one entry"); azul de marca `#017cfa` como `--c-accent`
+  (antes era un verde petróleo). El logo vive en `src/components/brand/Wordmark.tsx` (el lockup
+  completo "Udex") y `BrandMark.tsx` (solo el ícono, para espacios chicos) — ambos recortados a su caja
+  justa desde el original y con el negro/blanco invertido por tema (el azul queda fijo). El favicon
+  (`src/app/icon.svg`) es un archivo estático aparte, con fondo blanco fijo.
 - **Canvas blanco**: el fondo de página y el de las tarjetas es el mismo blanco (`bg`/`surface`); se
   diferencian con un borde fino (`border-line`) y una sombra muy sutil (ver `Card`), no con un gris de
   fondo. `surface-2` queda para estados de hover/activo y para el fondo tenue de las pantallas sueltas
