@@ -172,8 +172,8 @@ export function PanelShell({ menu, companyName, branchName, canSwitch, user, the
   }, []);
 
   const brand = (
-    <Link href="/" className="flex h-14 items-center px-6">
-      <Wordmark className="h-6 w-auto" />
+    <Link href="/" className="flex h-16 items-center px-4">
+      <Wordmark className="h-10 w-auto" />
     </Link>
   );
 
@@ -201,7 +201,7 @@ export function PanelShell({ menu, companyName, branchName, canSwitch, user, the
         )}
 
         <div className="flex min-w-0 flex-col">
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-line bg-surface/95 px-3 backdrop-blur md:px-6">
+          <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-line bg-surface/95 px-3 backdrop-blur md:px-6">
             <button aria-label="Abrir menú" onClick={() => setDrawer(true)} className="flex size-9 items-center justify-center rounded-lg hover:bg-surface-2 md:hidden">
               <Menu className="size-5" />
             </button>
